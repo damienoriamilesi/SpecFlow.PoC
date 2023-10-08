@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/SpecFlow.PoC.props" />
+</Project>
