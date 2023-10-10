@@ -6,13 +6,19 @@ namespace SpecFlow.PoC.BDD.Tests.Steps;
 [Binding]
 public class InvoicingStepDefinition
 {
-    /*private readonly IObjectContainer _objectContainer;
-    
-    [Before()]
-    public void Init(IObjectContainer objectContainer)
+    private readonly IObjectContainer _objectContainer;
+    public InvoicingStepDefinition(IObjectContainer objectContainer)
     {
-        objectContainer.RegisterTypeAs<InvoiceService,IInvoiceService>();
-    } */   
+        _objectContainer = objectContainer;
+        //_invoiceService = invoiceService;
+    }
+
+    [Before()]
+    public void Init()
+    {
+        _objectContainer.RegisterTypeAs<InvoiceService,IInvoiceService>();
+    } 
+    
     private readonly IInvoiceService _invoiceService = new InvoiceService();
     private bool _isCurrentInvoiceWithHealthInsurance;
 
@@ -21,15 +27,15 @@ public class InvoicingStepDefinition
     [Given(@"an invoice in an open status and is not Health insurance")]
     public void GivenAnInvoiceInAnOpenStatusAndIsNotHealthInsurance()
     {
-        //_invoiceService.Invoice = _invoiceService.GetInvoice(Guid.NewGuid());
-        _invoice = _invoiceService.GetInvoice(Guid.NewGuid());
+        _invoiceService.Invoice = _invoiceService.GetInvoice(Guid.NewGuid());
+        //_invoice = _objectContainer.Resolve<IInvoiceService>().GetInvoice(Guid.NewGuid());
     }
 
     [When(@"I want to check the insured card data")]
     public void WhenInsuranceIsNotLaMal()
     {
         _isCurrentInvoiceWithHealthInsurance = _invoice.IsLamal;
-            //_invoiceService.Invoice.IsLamal;
+        //_invoiceService.Invoice.IsLamal = false;
     }
 
     [Then(@"a business exception is raised with the message ""(.*)""")]
@@ -49,13 +55,13 @@ public class InvoicingStepDefinition
     public void GivenAnInvoiceInAnOpenStatusAndHasHealthInsurance()
     {
         //_invoice = new Invoice { Status = Status.Open, IsLamal = true };
-        ScenarioContext.StepIsPending();
+        //ScenarioContext.StepIsPending();
     }
 
     [When(@"I check the insured card data by CaDa number")]
     public void WhenICheckTheInsuredCardDataByCaDaNumber()
     {
-        var insuranceFromCard = _invoiceService.GetInsurance(_invoice.Insurance.Gln);
+        //var insuranceFromCard = _invoiceService.GetInsurance(_invoice.Insurance.Gln);
         
     }
 
@@ -92,7 +98,7 @@ public class Insurance
 public class InvoiceService : IInvoiceService
 {
     public Guid InvoiceId { get; set; }
-    public Invoice GetInvoice(Guid id) => new(){ IsLamal = true, Insurance = new Insurance { Gln = "7612030345082"}};
+    public Invoice GetInvoice(Guid id) => new(){ IsLamal = false, Insurance = new Insurance { Gln = "7612030345082"}};
     public Insurance GetInsurance(string? gln)
     {
         return new Insurance();
@@ -100,7 +106,8 @@ public class InvoiceService : IInvoiceService
     public Invoice? Invoice { get; set; }
     public void SaveChanges()
     {
-        if(!Invoice!.IsLamal) throw new InvoiceIsNotHealthInsuranceException();
+        if(!Invoice!.IsLamal) 
+            throw new InvoiceIsNotHealthInsuranceException();
     }
 }
 

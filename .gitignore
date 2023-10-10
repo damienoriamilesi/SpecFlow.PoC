@@ -13,6 +13,13 @@
 *.sln.docstates
 
 # Build results
+SpecFlow.PoC/bin/*
+SpecFlow.PoC.Tests/bin/*
+SpecFlow.PoC.BDD.Tests/bin/*
+SpecFlow.PoC/obj/*
+SpecFlow.PoC.Tests/obj/*
+SpecFlow.PoC.BDD.Tests/obj/*
+
 **/[Dd]ebug/*
 **/[Rr]elease/*
 **/x64/*

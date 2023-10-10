@@ -12,8 +12,9 @@ public class SecondScenarioClass
     //private readonly HttpClient _client;
     //private readonly BddTestsApplicationFactory _factory = new();
 
-    private readonly Mock<IProductRepository> _productRepositoryMock = new Mock<IProductRepository>();
+    private readonly Mock<IProductRepository> _productRepositoryMock = new();
     private readonly IProductService _service;
+    private Product[]? Products { get; set; }
 
     public SecondScenarioClass()
     {
@@ -23,7 +24,7 @@ public class SecondScenarioClass
     [Given(@"Database contains products :")]
     public async Task GivenDatabaseContainsProducts(Table table)
     {
-        var products = await _service.GetAllProductsAsync();
+        Products = await _service.GetAllProductsAsync();
     }
 
     [When(@"A call is made to '(.*)'")]
@@ -41,13 +42,13 @@ public class SecondScenarioClass
 
 public class BddTestsApplicationFactory : WebApplicationFactory<Program>
 {
-    public readonly InMemoryProductRepository ProductRepository = new InMemoryProductRepository();
+    private readonly InMemoryProductRepository _productRepository = new InMemoryProductRepository();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            services.AddScoped<IProductRepository>(x => ProductRepository);
+            services.AddScoped<IProductRepository>(_ => _productRepository);
         });
 
         builder.UseEnvironment("Development");
@@ -107,15 +108,24 @@ public class ProductService : IProductService
     }
 }
 
-public class Product
+public abstract class Product
 {
-    public Guid ProductId { get; set; }
+    protected Product(Guid productId, string name, string description, decimal price, int stock)
+    {
+        ProductId = productId;
+        Name = name;
+        Description = description;
+        Price = price;
+        Stock = stock;
+    }
 
-    public string Name { get; set; }
+    private Guid ProductId { get; set; }
 
-    public string Description { get; set; }
+    private string Name { get; set; }
 
-    public Decimal Price { get; set; }
-        
-    public int Stock { get; set; }
+    private string Description { get; set; }
+
+    private decimal Price { get; set; }
+
+    private int Stock { get; set; }
 }

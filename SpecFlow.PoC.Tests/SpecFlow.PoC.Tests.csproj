@@ -24,18 +24,50 @@
   </ItemGroup>
 
   <ItemGroup>
-    <SpecFlowFeatureFiles Remove="obj\**" />
+    <Content Include="obj\Debug\net6.0\MvcTestingAppManifest.json" />
+    <Content Include="obj\Debug\net6.0\refint\SpecFlow.PoC.Tests.dll" />
+    <Content Include="obj\Debug\net6.0\ref\SpecFlow.PoC.Tests.dll" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.AssemblyInfoInputs.cache" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.assets.cache" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.csproj.AssemblyReference.cache" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.csproj.CopyComplete" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.csproj.CoreCompileInputs.cache" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.dll" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.GeneratedMSBuildEditorConfig.editorconfig" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.genruntimeconfig.cache" />
+    <Content Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.pdb" />
+    <Content Include="obj\project.assets.json" />
+    <Content Include="obj\project.nuget.cache" />
+    <Content Include="obj\project.packagespec.json" />
+    <Content Include="obj\rider.project.restore.info" />
+    <Content Include="obj\SpecFlow.PoC.Tests.csproj.nuget.dgspec.json" />
+    <Content Include="obj\SpecFlow.PoC.Tests.csproj.nuget.g.props" />
+    <Content Include="obj\SpecFlow.PoC.Tests.csproj.nuget.g.targets" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="obj\Debug\net6.0\.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\net6.0\SpecFlow.PoC.Tests.GlobalUsings.g.cs" />
+    <Compile Include="obj\Debug\net6.0\xUnit.AssemblyHooks.cs" />
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="obj\Debug\**" />
     <Compile Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <SpecFlowFeatureFiles Remove="obj\Debug\**" />
+    <SpecFlowFeatureFiles Remove="obj\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="obj\Debug\**" />
     <EmbeddedResource Remove="obj\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="obj\Debug\**" />
     <None Remove="obj\**" />
   </ItemGroup>
 </Project>
