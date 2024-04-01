@@ -1,13 +1,20 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
 using MediatR;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using SpecFlow.PoC.Features;
+using SpecFlow.PoC.Features.UpdateWeather;
 
 namespace SpecFlow.PoC.Controllers;
 
+/// <summary>
+/// Weather forecast
+/// </summary>
 [ApiController]
-[Produces("application/json")]
-[Route("[controller]")]
+//[Produces("application/json")]
+[Consumes("application/json")]
+[Route("api/[controller]s")]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = {
@@ -16,72 +23,97 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly IMediator _mediator;
+    private readonly IDataProtector _dataProtector;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator)
+    /// <summary>
+    /// WeatherForecastController
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="mediator"></param>
+    /// <param name="dataProtectionProvider"></param>
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, IDataProtectionProvider dataProtectionProvider)
     {
         _logger = logger;
         _mediator = mediator;
+        _dataProtector = dataProtectionProvider.CreateProtector("WeatherAPI");
     }
 
+    /// <summary>
+    /// JUST DO IT
+    /// </summary>
+    /// <returns></returns>
     [HttpGet(Name = "GetWeatherForecast")]
     [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IEnumerable<WeatherForecast> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateTime.Now.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            Summary =  _dataProtector.Protect(Summaries[Random.Shared.Next(Summaries.Length)])
         })
         .ToArray();
+
+        return result;
+    }
+    
+    /// <summary>
+    /// JUST DO IT with a parameter
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("{id}" ,Name = "GetWeatherForecastWithParam")]
+    [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public IEnumerable<WeatherForecast> GetById(int id)
+    {
+        var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        {
+            Date = DateTime.Now.AddDays(index),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary =  _dataProtector.Protect(Summaries[Random.Shared.Next(Summaries.Length)])
+        })
+        .ToArray();
+
+        return result;
     }
 
+    /// <summary>
+    /// PATCH /UpdatePartial
+    /// </summary>
+    /// <param name="patchDoc"></param>
+    /// <example>application/json:[{"operationType": 0, "path": "/description",    "op": "string",    "from": "string",    "value": "TEST"}]</example>
+    /// <returns></returns>
     [HttpPatch]
     public async Task<IActionResult> UpdatePartial([FromBody] JsonPatchDocument<WeatherForecast> patchDoc)
     {
         var objectToApplyTo = new WeatherForecast();
         patchDoc.ApplyTo(objectToApplyTo);
 
-        var result = await _mediator.Send(new UpdateWeatherForecastRequest{ WeatherForecast = objectToApplyTo });
+        var result = await _mediator.Send(new UpdateWeatherForecastCommand{ WeatherForecast = objectToApplyTo });
         
         await _mediator.Publish(new WeatherUpdatedNotification(new WeatherForecast{ TemperatureC = result }));
         
         return new ObjectResult(objectToApplyTo);
     }
-}
 
-public class WeatherUpdatedNotificationHandler : INotificationHandler<WeatherUpdatedNotification>
-{
-    public Task Handle(WeatherUpdatedNotification notification, CancellationToken cancellationToken)
+    /// <summary>
+    /// Add new weather forecast
+    /// </summary>
+    /// <param name="request"></param>
+    /// <example>{"forecasts": [{"weatherType": "Sunny","temperature": 15}]}</example>
+    /// <returns></returns>
+    [HttpPost]
+    //[DefaultValue(typeof(CreateWeatherForecastRequest), "{ 'Forecasts': [{ 'WeatherType' : 'Sunny', 'Temperature': 25 }]")]
+    
+    public IActionResult Create([FromBody] CreateWeatherForecastRequest request)
     {
-        Console.WriteLine($"WeatherUpdated : { notification.WeatherForecast?.TemperatureC }");
-        return Task.CompletedTask;
-    }
-}
-public class WeatherUpdatedAgainNotificationHandler : INotificationHandler<WeatherUpdatedNotification>
-{
-    public Task Handle(WeatherUpdatedNotification notification, CancellationToken cancellationToken)
-    {
-        Console.WriteLine($"WeatherUpdated again : { notification.WeatherForecast?.TemperatureF }");
-        return Task.CompletedTask;
+        return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
     }
 }
 
-public class UpdateWeatherForecastRequestHandler : IRequestHandler<UpdateWeatherForecastRequest, int>
-{
-    public Task<int> Handle(UpdateWeatherForecastRequest request, CancellationToken cancellationToken)
-    {
-        Console.WriteLine("Handler");
-        return Task.FromResult(request.WeatherForecast.TemperatureC);
-    }
-}
+public record CreateWeatherForecastRequest(Forecast[] Forecasts);
 
-public record WeatherUpdatedNotification(WeatherForecast WeatherForecast) : INotification;
-
-public class UpdateWeatherForecastRequest : IRequest<int>
-{
-    public WeatherForecast WeatherForecast { get; set; }
-}
-
+public record Forecast(string WeatherType, int Temperature);

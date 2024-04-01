@@ -10,6 +10,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddDataProtection();
+        
         // Add services to the container.
         builder.Services.AddControllers().AddNewtonsoftJson();
           
@@ -17,23 +19,30 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-        builder.Services.AddSwaggerGen(x=> x.SwaggerDoc("v1", new OpenApiInfo {
-            Title = "WeatherAPI",
-            Description = "TODO > Describe",
-            Version = "v1",
-            TermsOfService = new Uri("https://www.google.fr"),
-            Contact = new OpenApiContact
+        builder.Services.AddSwaggerGen(options =>
             {
-                Name = "Author",
-                Url = new Uri("https://www.contact@gmail.com"),
-                Email = "toto@gmail.com"
-            },
-            License = new OpenApiLicense
-            {
-                Name = "License",
-                Url = new Uri("https://www.dao.fr")
-            }
-        }));
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "WeatherAPI",
+                    Description = "TODO > Describe",
+                    Version = "v1",
+                    TermsOfService = new Uri("https://www.google.fr"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Author",
+                        Url = new Uri("https://www.contact@gmail.com"),
+                        Email = "toto@gmail.com"
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "License",
+                        Url = new Uri("https://www.dao.fr")
+                    }
+                });
+                
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
         
         var app = builder.Build();
 
@@ -51,8 +60,8 @@ public class Program
             //app.UseSwaggerUI();
             app.UseSwaggerUI(options =>
             {
-                //options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                //options.RoutePrefix = string.Empty;
+                options.SwaggerEndpoint("swagger/v1/swagger.json", "WeatherAPI - v1");
+                options.RoutePrefix = string.Empty;
             });
         }
 

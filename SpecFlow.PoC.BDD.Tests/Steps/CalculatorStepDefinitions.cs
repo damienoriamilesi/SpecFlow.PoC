@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using BoDi;
+using Xunit;
 
 namespace SpecFlow.PoC.BDD.Tests.Steps;
 
@@ -8,10 +9,12 @@ public sealed class CalculatorStepDefinitions
     // For additional details on SpecFlow step definitions see https://go.specflow.org/doc-stepdef
 
     private readonly ScenarioContext _scenarioContext;
+    private readonly IObjectContainer _objectContainer;
 
-    public CalculatorStepDefinitions(ScenarioContext scenarioContext)
+    public CalculatorStepDefinitions(ScenarioContext scenarioContext, IObjectContainer objectContainer)
     {
         _scenarioContext = scenarioContext;
+        _objectContainer = objectContainer;
     }
 
     [Given("the first number is (.*)")]

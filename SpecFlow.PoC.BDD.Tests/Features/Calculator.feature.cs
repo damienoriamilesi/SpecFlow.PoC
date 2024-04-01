@@ -19,19 +19,21 @@ namespace SpecFlow.PoC.BDD.Tests.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature : object, Xunit.IClassFixture<CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature.FixtureData>, System.IDisposable
+    [Xunit.TraitAttribute("Category", "calculator")]
+    public partial class CalculatorFeature : object, Xunit.IClassFixture<CalculatorFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private string[] _featureTags = ((string[])(null));
+        private string[] _featureTags = new string[] {
+                "calculator"};
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
 #line 1 "Calculator.feature"
 #line hidden
         
-        public CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature(CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature.FixtureData fixtureData, SpecFlow_PoC_BDD_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public CalculatorFeature(CalculatorFeature.FixtureData fixtureData, SpecFlow_PoC_BDD_Tests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,11 +42,15 @@ namespace SpecFlow.PoC.BDD.Tests.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Calculator https://specflow.org/wp-content/uploads/2020/09/calculator.png", @"![Calculator](https://specflow.org/wp-content/uploads/2020/09/calculator.png)
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Calculator", @"![Calculator2](https://specflow.org/wp-content/uploads/2020/09/calculator.png)
 Simple calculator for adding **two** numbers
 
-Link to a feature: [Calculator]($projectname$/Features/Calculator.feature)
-***Further read***: **[Learn more about how to generate Living Documentation](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerator/Generating-Documentation.html)**", ProgrammingLanguage.CSharp, ((string[])(null)));
+***Further read***: **[Learn more about how to generate Living Documentation](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerator/Generating-Documentation.html)**
+
+[BUG] - LINK TO FEATURE => The search input is located on the [Home Screen](<~/Projects/SpecFlow.PoC/SpecFlow.PoC.BDD.Tests/Features/FirstScenario.feature>).
+	
+<a href=""#/document/Standalone/feature/f380c9824c9be2e696ef7cbdbac6f572"">Context Diagram</a>", ProgrammingLanguage.CSharp, new string[] {
+                        "calculator"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -85,7 +91,7 @@ Link to a feature: [Calculator]($projectname$/Features/Calculator.feature)
         }
         
         [Xunit.SkippableFactAttribute(DisplayName="Add two numbers")]
-        [Xunit.TraitAttribute("FeatureTitle", "Calculator https://specflow.org/wp-content/uploads/2020/09/calculator.png")]
+        [Xunit.TraitAttribute("FeatureTitle", "Calculator")]
         [Xunit.TraitAttribute("Description", "Add two numbers")]
         [Xunit.TraitAttribute("Category", "my-tag")]
         [Xunit.TraitAttribute("Category", "AX-22-AZERTY")]
@@ -98,7 +104,7 @@ Link to a feature: [Calculator]($projectname$/Features/Calculator.feature)
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", "\t***Further read***: \n\t**[Learn more about how to generate Living Documentation](" +
                     "https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerat" +
                     "or/Generating-Documentation.html)**", tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 9
+#line 15
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -118,16 +124,16 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 15
+#line 21
   testRunner.Given("the first number is 50", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 16
+#line 22
   testRunner.And("the second number is 70", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 17
+#line 23
   testRunner.When("the two numbers are added", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 18
+#line 24
   testRunner.Then("the result should be 120", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -141,12 +147,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             public FixtureData()
             {
-                CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature.FeatureSetup();
+                CalculatorFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                CalculatorHttpsSpecflow_OrgWp_ContentUploads202009Calculator_PngFeature.FeatureTearDown();
+                CalculatorFeature.FeatureTearDown();
             }
         }
     }

@@ -19,12 +19,14 @@ namespace SpecFlow.PoC.BDD.Tests.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [Xunit.TraitAttribute("Category", "Invoice")]
     public partial class CheckInsuranceFromInvoiceFeature : object, Xunit.IClassFixture<CheckInsuranceFromInvoiceFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private string[] _featureTags = ((string[])(null));
+        private string[] _featureTags = new string[] {
+                "Invoice"};
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
@@ -40,7 +42,8 @@ namespace SpecFlow.PoC.BDD.Tests.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Check Insurance from Invoice", null, ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Check Insurance from Invoice", null, ProgrammingLanguage.CSharp, new string[] {
+                        "Invoice"});
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -83,16 +86,16 @@ namespace SpecFlow.PoC.BDD.Tests.Features
         [Xunit.SkippableFactAttribute(DisplayName="Avoid checking CaDa if not LAMal")]
         [Xunit.TraitAttribute("FeatureTitle", "Check Insurance from Invoice")]
         [Xunit.TraitAttribute("Description", "Avoid checking CaDa if not LAMal")]
-        [Xunit.TraitAttribute("Category", "invoice")]
+        [Xunit.TraitAttribute("Category", "invoice1")]
         public virtual void AvoidCheckingCaDaIfNotLAMal()
         {
             string[] tagsOfScenario = new string[] {
-                    "invoice"};
+                    "invoice1"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Avoid checking CaDa if not LAMal", "Some more text:\n- Scenario text 1\n- Scenario text 2\n- Scenario text 3\n\t\n\thttps://" +
                     "docs.specflow.org/projects/specflow-livingdoc/en/latest/Generating/Markdown-and-" +
                     "Embedding-Images.html", tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 4
+#line 5
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -112,13 +115,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 12
+#line 13
  testRunner.Given("an invoice in an open status and is not Health insurance", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 13
+#line 14
  testRunner.When("I want to check the insured card data", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 14
+#line 15
  testRunner.Then("a business exception is raised with the message \"This insurance is not LAMal\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
@@ -128,15 +131,15 @@ this.ScenarioInitialize(scenarioInfo);
         [Xunit.SkippableFactAttribute(DisplayName="Replace wrong insurance")]
         [Xunit.TraitAttribute("FeatureTitle", "Check Insurance from Invoice")]
         [Xunit.TraitAttribute("Description", "Replace wrong insurance")]
-        [Xunit.TraitAttribute("Category", "mytag")]
+        [Xunit.TraitAttribute("Category", "invoice2")]
         public virtual void ReplaceWrongInsurance()
         {
             string[] tagsOfScenario = new string[] {
-                    "mytag"};
+                    "invoice2"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Replace wrong insurance", "\t![Calculator](https://docs.specflow.org/projects/specflow-livingdoc/en/latest/Ge" +
                     "nerating/Markdown-and-Embedding-Images.html)", tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 17
+#line 18
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -156,10 +159,10 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 19
+#line 20
  testRunner.Given("an invoice in an open status and has Health insurance", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 20
+#line 21
  testRunner.When("I check the insured card data by CaDa number", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
                 TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -172,18 +175,18 @@ this.ScenarioInitialize(scenarioInfo);
                 table1.AddRow(new string[] {
                             "42",
                             "true",
-                            "\"2023-01-09\"",
-                            "\"Me\"",
-                            "\"2023-07-08\"",
-                            "\"Me\""});
+                            "2023-01-09",
+                            "Me",
+                            "2023-07-08",
+                            "Me"});
                 table1.AddRow(new string[] {
                             "66",
                             "false",
-                            "\"2023-01-09\"",
-                            "\"You\"",
-                            "\"2023-07-08\"",
-                            "\"You\""});
-#line 21
+                            "2023-01-09",
+                            "You",
+                            "2023-07-08",
+                            "You"});
+#line 22
  testRunner.Then("I get the expected data", ((string)(null)), table1, "Then ");
 #line hidden
             }
@@ -193,14 +196,14 @@ this.ScenarioInitialize(scenarioInfo);
         [Xunit.SkippableFactAttribute(DisplayName="Replace suggested disabled insurance")]
         [Xunit.TraitAttribute("FeatureTitle", "Check Insurance from Invoice")]
         [Xunit.TraitAttribute("Description", "Replace suggested disabled insurance")]
-        [Xunit.TraitAttribute("Category", "custom-tag")]
+        [Xunit.TraitAttribute("Category", "invoice3")]
         public virtual void ReplaceSuggestedDisabledInsurance()
         {
             string[] tagsOfScenario = new string[] {
-                    "custom-tag"};
+                    "invoice3"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Replace suggested disabled insurance", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 27
+#line 28
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -220,13 +223,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 28
+#line 29
  testRunner.Given("an invoice in an open status and has Health insurance", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 29
+#line 30
  testRunner.When("the system suggests a disabled insurance", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 30
+#line 31
  testRunner.Then("I get an active insurance by the disabled GLN", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

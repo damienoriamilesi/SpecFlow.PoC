@@ -1,4 +1,4 @@
-﻿namespace SpecFlow.PoC;
+﻿namespace SpecFlow.PoC.Features;
 
 public class WeatherForecast
 {
