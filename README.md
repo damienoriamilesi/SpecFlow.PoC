@@ -1,3 +1,3 @@
 Generate Living Doc
 
-livingdoc test-assembly SpecFlow.PoC.BDD.Tests.dll -t testExecution.json
+./livingdoc test-assembly xxx/SpecFlow.PoC.BDD.Tests.dll -t xxx/TestExecution.json -o xxx/LivingDoc/PoC.BDD.Report.html
