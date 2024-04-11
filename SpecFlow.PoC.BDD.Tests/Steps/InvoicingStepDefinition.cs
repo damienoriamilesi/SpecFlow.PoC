@@ -7,40 +7,31 @@ namespace SpecFlow.PoC.BDD.Tests.Steps;
 [Binding]
 public class InvoicingStepDefinition
 {
-    //private readonly IObjectContainer _objectContainer;
+    private readonly IObjectContainer _objectContainer;
     private readonly ScenarioContext _scenarioContext;
 
     public InvoicingStepDefinition(IObjectContainer objectContainer, ScenarioContext scenarioContext)
     {
-        //_objectContainer = objectContainer;
+        _objectContainer = objectContainer;
         _scenarioContext = scenarioContext;
-        //_invoiceService = new InvoiceService();
+        _objectContainer.RegisterTypeAs<CardRepository,ICardRepository>();
+        _invoiceService = new InvoiceService(new CardRepository());
     }
     
-    [Before()]
-    public void Init()
-    {
-        //_objectContainer.RegisterTypeAs<InvoiceService,IInvoiceService>();
-    } 
-    
-    private readonly IInvoiceService _invoiceService = new InvoiceService();
+    private readonly IInvoiceService _invoiceService;
     private bool _isCurrentInvoiceWithHealthInsurance;
-
-    private Invoice _invoice = new();
-    private CardRepository _cardService = new();
 
     [Given(@"an invoice in an open status and is not Health insurance")]
     public void GivenAnInvoiceInAnOpenStatusAndIsNotHealthInsurance()
     {
-        _invoiceService.Invoice = _invoiceService.GetInvoice(Guid.NewGuid());
-        //_invoice = _objectContainer.Resolve<IInvoiceService>().GetInvoice(Guid.NewGuid());
+        _scenarioContext["currentInvoice"] = new Invoice { Insurance = new Insurance(),IsLamal = false};
+        _invoiceService.Invoice = (Invoice)_scenarioContext["currentInvoice"];
     }
 
     [When(@"I want to check the insured card data")]
     public void WhenInsuranceIsNotLaMal()
     {
-        _isCurrentInvoiceWithHealthInsurance = _invoice.IsLamal;
-        //_invoiceService.Invoice.IsLamal = false;
+        _isCurrentInvoiceWithHealthInsurance = (_scenarioContext["currentInvoice"] as Invoice)!.IsLamal;
     }
 
     [Then(@"a business exception is raised with the message ""(.*)""")]
@@ -67,16 +58,18 @@ public class InvoicingStepDefinition
     [Given(@"an invoice in an open status and has Health insurance")]
     public void GivenAnInvoiceInAnOpenStatusAndHasHealthInsurance()
     {
-        _invoice = _invoiceService.GetInvoice(Guid.NewGuid()); 
-        //new Invoice { Status = Status.Open, Insurance = new Insurance {Gln = 7600E239842}, IsLamal = true };
+        _scenarioContext["currentInvoiceHealth"] = 
+            new Invoice { Status = Status.Open, CardNumber = 42, Insurance = new Insurance {Gln = "7600E239842"}, IsLamal = true };
         //ScenarioContext.StepIsPending();
     }
 
     [When(@"I check the insured card data by CaDa number")]
     public void WhenICheckTheInsuredCardDataByCaDaNumber()
     {
+        var cardRepo = _objectContainer.Resolve<ICardRepository>();
         //var insuranceFromCard = _invoiceService.GetInsurance(_invoice.Insurance.Gln);
-        var cardInformations = _cardService.GetCardInformations(_invoice.CardNumber.GetValueOrDefault());
+        var cardInformations = 
+            cardRepo.GetCardInformations((_scenarioContext["currentInvoiceHealth"] as Invoice).CardNumber.GetValueOrDefault());
         
         _scenarioContext["CardInformationsFromInvoice"] = cardInformations;
     }
@@ -94,9 +87,9 @@ public class InvoicingStepDefinition
     }
 }
 
-internal class CardRepository
+public class CardRepository : ICardRepository
 {
-    internal CardInformation[] GetCardInformations(int cardNumber)
+    public CardInformation[] GetCardInformations(int cardNumber)
     {
         if (cardNumber == default) return Array.Empty<CardInformation>(); 
         return new[]
@@ -114,7 +107,12 @@ internal class CardRepository
     }
 }
 
-internal record CardInformation : IAuditable
+public interface ICardRepository
+{
+    CardInformation[] GetCardInformations(int cardNumber);
+}
+
+public record CardInformation : IAuditable
 {
     public int Id { get; set; }
     public bool IsLamal { get; set; }
@@ -144,6 +142,13 @@ public class Insurance
 
 public class InvoiceService : IInvoiceService
 {
+    private readonly ICardRepository _cardRepository;
+
+    public InvoiceService(ICardRepository cardRepository)
+    {
+        _cardRepository = cardRepository;
+    }
+    
     public Guid InvoiceId { get; set; }
     public Invoice GetInvoice(Guid id) => new(){ CardNumber = 42, IsLamal = false, Insurance = new Insurance { Gln = "7612030345082"}};
     
