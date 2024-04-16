@@ -69,7 +69,7 @@ public class InvoicingStepDefinition
         var cardRepo = _objectContainer.Resolve<ICardRepository>();
         //var insuranceFromCard = _invoiceService.GetInsurance(_invoice.Insurance.Gln);
         var cardInformations = 
-            cardRepo.GetCardInformations((_scenarioContext["currentInvoiceHealth"] as Invoice).CardNumber.GetValueOrDefault());
+            cardRepo.GetCardInformations((_scenarioContext["currentInvoiceHealth"] as Invoice)!.CardNumber.GetValueOrDefault());
         
         _scenarioContext["CardInformationsFromInvoice"] = cardInformations;
     }
@@ -118,8 +118,8 @@ public record CardInformation : IAuditable
     public bool IsLamal { get; set; }
     public DateTime CreatedOn { get; set; }
     public DateTime UpdatedOn { get; set; }
-    public string CreatedBy { get; set; }
-    public string UpdatedBy { get; set; }
+    public string CreatedBy { get; set; } = "Me";
+    public string UpdatedBy { get; set; } = "Me";
 }
 
 public class InvoiceIsNotHealthInsuranceException : Exception
@@ -168,14 +168,14 @@ public class Invoice : BaseEntity, IAuditable
 {
     internal bool IsLamal { get; set; }
     public DateTime CreatedOn { get; set; }
-    public string CreatedBy { get; set; }
+    public string CreatedBy { get; set; } = "Me";
     public DateTime UpdatedOn { get; set; }
-    public string UpdatedBy { get; set; }
+    public string UpdatedBy { get; set; } = "Me";
 
     public Status Status { get; set; }
 
     public int? CardNumber { get; set; }
-    public Insurance Insurance { get; set; }
+    public Insurance? Insurance { get; set; }
     
     //public string? InsuranceGln { get; set; }
 }

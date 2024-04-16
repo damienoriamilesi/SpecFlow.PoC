@@ -13,7 +13,7 @@ public class Program
         builder.Services.AddDataProtection();
         
         // Add services to the container.
-        builder.Services.AddControllers().AddNewtonsoftJson();
+        builder.Services.AddControllers();
           
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -46,10 +46,6 @@ public class Program
         
         var app = builder.Build();
 
-        app.UseMetricServer(options =>
-        {
-            //options.Registry.CollectAndExportAsTextAsync()
-        });//Starting the metrics exporter, will expose "/metrics"
 
         
         // Configure the HTTP request pipeline.
@@ -60,12 +56,20 @@ public class Program
             //app.UseSwaggerUI();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("swagger/v1/swagger.json", "WeatherAPI - v1");
-                options.RoutePrefix = string.Empty;
+                options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1");
+                //options.
+                //options.RoutePrefix = string.Empty;
             });
         }
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
+
+        app.UseRouting();
+        
+        app.UseMetricServer(options =>
+        {
+            //options.Registry.CollectAndExportAsTextAsync()
+        });//Starting the metrics exporter, will expose "/metrics"
 
         //adding metrics related to HTTP
         app.UseHttpMetrics(options=>
@@ -73,8 +77,12 @@ public class Program
             options.AddCustomLabel("host", context => context.Request.Host.Host);
         });
 
-        app.UseAuthorization();
-
+        //app.UseAuthorization();
+        app.UseEndpoints(endpoint =>
+        {
+            endpoint.MapMetrics();
+            endpoint.MapControllers();
+        });
         app.MapControllers();
 
         app.Run();
