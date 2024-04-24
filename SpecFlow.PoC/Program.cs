@@ -14,13 +14,13 @@ public class Program
         
         // Add services to the container.
         builder.Services.AddControllers();
-          
+        builder.Services.AddHealthChecks()
+            .AddCheck<>();  
+        
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-        builder.Services.AddSwaggerGen(options =>
-            {
+        builder.Services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "WeatherAPI",
@@ -43,38 +43,33 @@ public class Program
                 var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
+
+        builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
         
         var app = builder.Build();
-
-
-        
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             //app.UseHsts();
             app.UseSwagger();
-            //app.UseSwaggerUI();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1");
-                //options.
-                //options.RoutePrefix = string.Empty;
             });
         }
-
         //app.UseHttpsRedirection();
-
         app.UseRouting();
-        
-        app.UseMetricServer(options =>
+        /*
+         app.UseMetricServer(options =>
         {
             //options.Registry.CollectAndExportAsTextAsync()
         });//Starting the metrics exporter, will expose "/metrics"
-
+        */
         //adding metrics related to HTTP
         app.UseHttpMetrics(options=>
         {
             options.AddCustomLabel("host", context => context.Request.Host.Host);
+            //options.AddCustomLabel("http", context => context.Request.HttpContext.);
         });
 
         //app.UseAuthorization();
@@ -82,8 +77,8 @@ public class Program
         {
             endpoint.MapMetrics();
             endpoint.MapControllers();
+            endpoint.MapHealthChecks("health");
         });
-        app.MapControllers();
 
         app.Run();
     }
