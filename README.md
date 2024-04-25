@@ -1,5 +1,26 @@
 # Add Open API Standard Support
 
+# Add EF Core support (for SQLite)
+
+Add the packages
+
+    Microsoft.EntityFrameworkCore 
+    Microsoft.EntityFrameworkCore.SQLite
+
+Then Add the instructions to ensure database is created during application startup
+        
+    using var scope = app.Services.CreateScope();
+    var dbContext = 
+        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+
+Finally, add the following to seed the Db if needed
+
+    if (!dbContext.Employees.Any())
+    {
+        dbContext.Employees.AddRange(TestFixture.BuildEmployees());
+        dbContext.SaveChanges();
+    }
 
 # Add Metrics with Prometheus / Grafana
 
@@ -61,8 +82,6 @@ Vous pouvez uniquement l'ajouter à la session active en exécutant la commande 
 
 <br><br>
 
-
-
 # HealthChecks
 
 Add healthchecks middleware (Microsoft.Extensions.Diagnostics.HealthChecks)
@@ -75,7 +94,8 @@ just after AddControllers instruction.
 Add the following to check if Db is up and running
 >             .AddCheck("SQLite Db", new SqliteHealthCheck("SQLiteSample.db", nameof(Person)));  
 
-
+<br>
+<br>
 
 # BDD - SpecFlow
 ## Hooks

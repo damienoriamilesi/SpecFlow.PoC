@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-            options.UseSqlite("Data Source=SampleApi.db")
+            options.UseSqlite("Data Source=SQLiteSample.db")
         );
         
         // Add services to the container.
@@ -63,27 +63,27 @@ var builder = WebApplication.CreateBuilder(args);
             dbContext.Employees.AddRange(TestFixture.BuildEmployees());
             dbContext.SaveChanges();
         }
-        
-        
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             //app.UseHsts();
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            app.UseSwagger().UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1");
             });
         }
         //app.UseHttpsRedirection();
         app.UseRouting();
-        /*
-         app.UseMetricServer(options =>
-        {
-            //options.Registry.CollectAndExportAsTextAsync()
-        });//Starting the metrics exporter, will expose "/metrics"
-        */
+
         //adding metrics related to HTTP
+        /*
+ app.UseMetricServer(options =>
+{
+    //options.Registry.CollectAndExportAsTextAsync()
+});//Starting the metrics exporter, will expose "/metrics"
+*/
+
         app.UseHttpMetrics(options=>
         {
             options.AddCustomLabel("host", context => context.Request.Host.Host);
