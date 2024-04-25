@@ -72,10 +72,10 @@ just after AddControllers instruction.
         builder.Services.AddControllers();
         builder.Services.AddHealthChecks();  
 
+Add the following to check if Db is up and running
+>             .AddCheck("SQLite Db", new SqliteHealthCheck("SQLiteSample.db", nameof(Person)));  
 
 
-
-<br>
 
 # BDD - SpecFlow
 ## Hooks

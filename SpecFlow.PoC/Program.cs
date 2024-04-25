@@ -1,21 +1,26 @@
 ﻿using System.Reflection;
+using HealthChecks.Sqlite;
 using Microsoft.OpenApi.Models;
 using Prometheus;
+using SpecFlow.PoC.Features;
+using Microsoft.EntityFrameworkCore;
+using SpecFlow.PoC;
 
-namespace SpecFlow.PoC;
 
-public class Program
-{
-    public static void Main(string[] args)
-    {
-        var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddDataProtection();
+        
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            options.UseSqlite("Data Source=SampleApi.db")
+        );
         
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddHealthChecks()
-            .AddCheck<>();  
+            .AddCheck("SQLite Db", new SqliteHealthCheck("SQLiteSample.db", nameof(Person)));  
+            
         
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -47,6 +52,19 @@ public class Program
         builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
         
         var app = builder.Build();
+        
+        // Ensure database is created during application startup
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.EnsureCreatedAsync();
+        
+        if (!dbContext.Employees.Any())
+        {
+            dbContext.Employees.AddRange(TestFixture.BuildEmployees());
+            dbContext.SaveChanges();
+        }
+        
+        
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -81,6 +99,7 @@ public class Program
         });
 
         app.Run();
-    }
-}
+
+
+
 

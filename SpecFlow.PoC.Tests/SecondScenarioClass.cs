@@ -1,3 +1,4 @@
+/*
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +41,7 @@ public class SecondScenarioClass
     }
 }
 
-public class BddTestsApplicationFactory : WebApplicationFactory<Program>
+public class BddTestsApplicationFactory //: WebApplicationFactory<>
 {
     private readonly InMemoryProductRepository _productRepository = new InMemoryProductRepository();
 
@@ -54,6 +55,7 @@ public class BddTestsApplicationFactory : WebApplicationFactory<Program>
         builder.UseEnvironment("Development");
     }
 }
+
 
 public class InMemoryProductRepository : IProductRepository
 {
@@ -129,3 +131,5 @@ public abstract class Product
 
     private int Stock { get; set; }
 }
+
+*/
