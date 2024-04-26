@@ -1,10 +1,15 @@
 ﻿using System.Reflection;
+using System.Text;
+using System.Text.Json;
 using HealthChecks.Sqlite;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SpecFlow.PoC;
+using SpecFlow.PoC.Controllers;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,9 +22,9 @@ var builder = WebApplication.CreateBuilder(args);
         );
         
         // Add services to the container.
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(config => config.Filters.Add<DatProtectionActionFilter>());
         builder.Services.AddHealthChecks()
-            .AddCheck("SQLite Db", new SqliteHealthCheck("SQLiteSample.db", nameof(Person)));  
+            .AddCheck("SQLite Db", new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));  
             
         
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -50,7 +55,7 @@ var builder = WebApplication.CreateBuilder(args);
             });
 
         builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
-        
+
         var app = builder.Build();
         
         // Ensure database is created during application startup
@@ -95,11 +100,56 @@ var builder = WebApplication.CreateBuilder(args);
         {
             endpoint.MapMetrics();
             endpoint.MapControllers();
-            endpoint.MapHealthChecks("health");
+            endpoint.MapHealthChecks("health", new HealthCheckOptions
+            {
+                ResponseWriter = WriteResponse
+            });
         });
 
         app.Run();
 
 
+
+static Task WriteResponse(HttpContext context, HealthReport healthReport)
+{
+    context.Response.ContentType = "application/json; charset=utf-8";
+
+    var options = new JsonWriterOptions { Indented = true };
+
+    using var memoryStream = new MemoryStream();
+    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+    {
+        jsonWriter.WriteStartObject();
+        jsonWriter.WriteString("status", healthReport.Status.ToString());
+        jsonWriter.WriteStartObject("results");
+
+        foreach (var healthReportEntry in healthReport.Entries)
+        {
+            jsonWriter.WriteStartObject(healthReportEntry.Key);
+            jsonWriter.WriteString("status",
+                healthReportEntry.Value.Status.ToString());
+            jsonWriter.WriteString("description",
+                healthReportEntry.Value.Description);
+            jsonWriter.WriteStartObject("data");
+
+            foreach (var item in healthReportEntry.Value.Data)
+            {
+                jsonWriter.WritePropertyName(item.Key);
+
+                JsonSerializer.Serialize(jsonWriter, item.Value,
+                    item.Value?.GetType() ?? typeof(object));
+            }
+
+            jsonWriter.WriteEndObject();
+            jsonWriter.WriteEndObject();
+        }
+
+        jsonWriter.WriteEndObject();
+        jsonWriter.WriteEndObject();
+    }
+
+    return context.Response.WriteAsync(
+        Encoding.UTF8.GetString(memoryStream.ToArray()));
+}
 
 

@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
 
@@ -117,3 +118,20 @@ public class WeatherForecastController : ControllerBase
 public record CreateWeatherForecastRequest(Forecast[] Forecasts);
 
 public record Forecast(string WeatherType, int Temperature);
+
+
+
+public class DatProtectionActionFilter : IActionFilter
+{
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
+        // Do something before the action executes.
+    }
+
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
+        // Do something after the action executes.
+        // For each property decorated with DataProtection
+        var instanceFromResponse = context.Result.GetType().GetProperties();
+    }
+}
