@@ -38,7 +38,9 @@ https://docs.docker.com/config/daemon/prometheus/
 
 ### PROMETHEUS
 
-> docker run --name my-prometheus --mount type=bind,source=/tmp/prometheus.> yml,destination=/etc/prometheus/prometheus.yml -p 9090:9090 prom/prometheus
+Ajouter le fichier prometheus.yml de configuration dans un dossier identifié comme volume
+
+> docker run --name my-prometheus --mount type=bind,source=/tmp/prometheus,destination=/etc/prometheus/prometheus -p 9090:9090 prom/prometheus
 
 
 
@@ -120,5 +122,7 @@ TODO
 ./livingdoc test-assembly xxx/SpecFlow.PoC.BDD.Tests.dll -t xxx/TestExecution.json -o xxx/LivingDoc/PoC.BDD.Report.html
 
 # KeyCloak
+
+    docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak start-dev
 
 # Vault Hashicorp?
