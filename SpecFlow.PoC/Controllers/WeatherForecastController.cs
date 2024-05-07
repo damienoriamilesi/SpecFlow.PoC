@@ -24,6 +24,7 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly IMediator _mediator;
+    private readonly ApplicationDbContext _context;
     private readonly IDataProtector _dataProtector;
 
     /// <summary>
@@ -32,10 +33,12 @@ public class WeatherForecastController : ControllerBase
     /// <param name="logger"></param>
     /// <param name="mediator"></param>
     /// <param name="dataProtectionProvider"></param>
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, IDataProtectionProvider dataProtectionProvider)
+    
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, IDataProtectionProvider dataProtectionProvider, ApplicationDbContext context)
     {
         _logger = logger;
         _mediator = mediator;
+        _context = context;
         _dataProtector = dataProtectionProvider.CreateProtector("WeatherAPI");
     }
 
@@ -64,11 +67,11 @@ public class WeatherForecastController : ControllerBase
     /// JUST DO IT with a parameter
     /// </summary>
     /// <returns></returns>
-    [HttpGet("{id}" ,Name = "GetWeatherForecastWithParam")]
+    [HttpGet("{id:int}" ,Name = "GetWeatherForecastWithParam")]
     [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public IEnumerable<WeatherForecast> GetById(int id)
+    public ActionResult<WeatherForecast> GetById(int id)
     {
         var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
@@ -76,9 +79,9 @@ public class WeatherForecastController : ControllerBase
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary =  _dataProtector.Protect(Summaries[Random.Shared.Next(Summaries.Length)])
         })
-        .ToArray();
+        .First();
 
-        return result;
+        return Ok(result);
     }
 
     /// <summary>
@@ -118,8 +121,6 @@ public class WeatherForecastController : ControllerBase
 public record CreateWeatherForecastRequest(Forecast[] Forecasts);
 
 public record Forecast(string WeatherType, int Temperature);
-
-
 
 public class DatProtectionActionFilter : IActionFilter
 {

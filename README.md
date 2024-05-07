@@ -1,5 +1,19 @@
 # Add Open API Standard Support
 
+# Caching
+
+Adding Response caching 
+Just add middleware 
+
+    builder.Services.AddResponseCaching(cfg => { });
+
+And just BEFORE MapControllers
+
+    app.UseResponseCaching();
+
+https://code-maze.com/aspnetcore-response-caching/
+
+
 # Add EF Core support (for SQLite)
 
 Add the packages
@@ -124,5 +138,56 @@ TODO
 # KeyCloak
 
     docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak start-dev
+
+Add the following instructions
+
+    services.AddKeycloakAuthentication(builder.Configuration);
+    services.AddAuthorization();
+
+https://medium.com/@ahmed.gaduo_93938/how-to-implement-keycloak-authentication-in-a-net-core-application-ce8603698f24
+
+And this chunk
+
+    services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo{ Title = "My API", Version = "v1" });
+        options.AddSecurityDefinition("Keycloak", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                Implicit = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri("https://your-keycloak-server/realms/your-realm/protocol/openid-connect/auth"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "openid", "openid" },
+                        { "profile", "profile" }
+                    }
+                }
+            }
+        });
+        
+        OpenApiSecurityScheme keycloakSecurityScheme = new()
+        {
+            Reference = new OpenApiReference
+            {
+                Id = "Keycloak",
+                Type = ReferenceType.SecurityScheme,
+            },
+            In = ParameterLocation.Header,
+            Name = "Bearer",
+            Scheme = "Bearer",
+        };
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            { keycloakSecurityScheme, Array.Empty<string>() },
+        });
+        
+        var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        options.IncludeXmlComments(xmlPath);
+    });
 
 # Vault Hashicorp?
