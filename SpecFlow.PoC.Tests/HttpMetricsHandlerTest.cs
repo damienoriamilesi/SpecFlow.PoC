@@ -10,6 +10,7 @@ public class HttpClientMetricsMessageHandlerUnitTests
     [Fact]
     public void ShouldExecuteBitwiseOperations()
     {
+        Assert.Equal(1, 0);
         //MyEnum resultEnum = MyEnum.First | MyEnum.Second;
         
         // int x = 5, y = 10, result;
