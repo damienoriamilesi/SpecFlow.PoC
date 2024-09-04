@@ -1,4 +1,4 @@
-/*
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +22,7 @@ public class SecondScenarioClass
         //_client = _factory.CreateDefaultClient(new Uri($"http://localhost/"));
         _service = new ProductService(_productRepositoryMock.Object);
     }
+    
     [Given(@"Database contains products :")]
     public async Task GivenDatabaseContainsProducts(Table table)
     {
@@ -31,7 +32,6 @@ public class SecondScenarioClass
     [When(@"A call is made to '(.*)'")]
     public void WhenACallIsMadeTo(string p0)
     {
-        ScenarioContext.StepIsPending();
     }
 
     [Then(@"The Result Should be :")]
@@ -45,7 +45,7 @@ public class BddTestsApplicationFactory //: WebApplicationFactory<>
 {
     private readonly InMemoryProductRepository _productRepository = new InMemoryProductRepository();
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    protected void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
@@ -131,5 +131,3 @@ public abstract class Product
 
     private int Stock { get; set; }
 }
-
-*/
