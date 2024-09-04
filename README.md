@@ -1,3 +1,6 @@
+![example workflow](https://github.com/damienoriamilesi/SpecFlow.PoC/actions/workflows/dotnet.yml/badge.svg)
+
+
 # Add Open API Standard Support
 
 # Caching
