@@ -146,6 +146,8 @@ Add the following instructions
 
 https://medium.com/@ahmed.gaduo_93938/how-to-implement-keycloak-authentication-in-a-net-core-application-ce8603698f24
 
+https://nikiforovall.github.io/aspnetcore/dotnet/2022/08/24/dotnet-keycloak-auth.html
+
 And this chunk
 
     services.AddSwaggerGen(options =>

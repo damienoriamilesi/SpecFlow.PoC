@@ -1,10 +1,11 @@
 using MediatR;
+#pragma warning disable CS1591
 
 namespace SpecFlow.PoC.Features.UpdateWeather;
 
 public class UpdateWeatherForecastCommand : IRequest<int>
 {
-    public WeatherForecast WeatherForecast { get; set; }
+    public WeatherForecast? WeatherForecast { get; set; }
 }
 public record WeatherUpdatedNotification(WeatherForecast WeatherForecast) : INotification;
 
@@ -32,7 +33,7 @@ public class UpdateWeatherForecastCommandHandler : IRequestHandler<UpdateWeather
     public Task<int> Handle(UpdateWeatherForecastCommand request, CancellationToken cancellationToken)
     {
         Console.WriteLine("Handler");
-        return Task.FromResult(request.WeatherForecast.TemperatureC);
+        return Task.FromResult(request.WeatherForecast!.TemperatureC);
     }
 }
 

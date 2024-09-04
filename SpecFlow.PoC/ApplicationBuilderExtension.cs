@@ -1,23 +1,29 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
+#pragma warning disable CS1591
 
 public static class ApplicationBuilderExtension
 {
-    public static void AddOpenApiDocumentation(this IServiceCollection services)
+    public static void AddOpenApiDocumentation(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new OpenApiInfo{ Title = "My sample API", Version = "v1" });
+            options.SwaggerDoc("v1", new OpenApiInfo { Title = "My sample API", Version = "v1" });
             options.AddSecurityDefinition("Keycloak", new OpenApiSecurityScheme
             {
-                Type = SecuritySchemeType.OAuth2,
+                Type = SecuritySchemeType.OpenIdConnect,
                 Flows = new OpenApiOAuthFlows
                 {
                     Implicit = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri("https://your-keycloak-server/realms/your-realm/protocol/openid-connect/auth"),
+                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]),
                         Scopes = new Dictionary<string, string> { { "openid", "openid" }, { "profile", "profile" } }
+                    }
+                    , AuthorizationCode = new OpenApiOAuthFlow
+                    {
+                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]),
+                        
                     }
                 }
             });

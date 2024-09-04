@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using Prometheus;
 using Xunit;
@@ -6,6 +7,34 @@ namespace SpecFlow.PoC.Tests;
 
 public class HttpClientMetricsMessageHandlerUnitTests
 {
+    [Fact]
+    public void ShouldExecuteBitwiseOperations()
+    {
+        //MyEnum resultEnum = MyEnum.First | MyEnum.Second;
+        
+        // int x = 5, y = 10, result;
+        // result = x & y;
+        // Debug.WriteLine("Bitwise AND: " + result);
+        // result = x | y;
+        // Debug.WriteLine("Bitwise OR: " + result);
+        // result = x ^ y;
+        // Debug.WriteLine("Bitwise XOR: " + result);
+        // result = ~x;
+        // Debug.WriteLine("Bitwise Complement: " + result);
+        // result = x << 2;
+        // Debug.WriteLine("Bitwise Left Shift: " + result);
+        // result = x >> 2;
+        // Debug.WriteLine("Bitwise Right Shift: " + result);
+    }
+
+    [Flags]
+    enum MyEnum
+    {
+        First,
+        Second,
+        Third
+    }
+    
     [Fact]
     public async Task When_SendingAsync_Expect_MetricsCollected()
     {

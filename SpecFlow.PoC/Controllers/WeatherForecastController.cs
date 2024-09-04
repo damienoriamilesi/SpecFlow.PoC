@@ -1,11 +1,11 @@
-﻿using System.ComponentModel;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
+#pragma warning disable CS1591
 
 namespace SpecFlow.PoC.Controllers;
 
@@ -33,8 +33,9 @@ public class WeatherForecastController : ControllerBase
     /// <param name="logger"></param>
     /// <param name="mediator"></param>
     /// <param name="dataProtectionProvider"></param>
-    
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, IDataProtectionProvider dataProtectionProvider, ApplicationDbContext context)
+    /// <param name="context"></param>
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, 
+                                    IDataProtectionProvider dataProtectionProvider, ApplicationDbContext context)
     {
         _logger = logger;
         _mediator = mediator;
@@ -133,6 +134,6 @@ public class DatProtectionActionFilter : IActionFilter
     {
         // Do something after the action executes.
         // For each property decorated with DataProtection
-        var instanceFromResponse = context.Result.GetType().GetProperties();
+        var instanceFromResponse = context.Result!.GetType().GetProperties();
     }
 }

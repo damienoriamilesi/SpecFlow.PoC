@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SpecFlow.PoC.Features;
+#pragma warning disable CS1591
 
 namespace SpecFlow.PoC;
 
@@ -7,7 +8,10 @@ namespace SpecFlow.PoC;
 public class ApplicationDbContext : DbContext
 {
     /// <inheritdoc />
-    public ApplicationDbContext(DbContextOptions options) : base(options) { }
+    public ApplicationDbContext(DbContextOptions options, DbSet<Employee> employees) : base(options)
+    {
+        Employees = employees;
+    }
     public DbSet<Employee> Employees { get; set; }
 }
 

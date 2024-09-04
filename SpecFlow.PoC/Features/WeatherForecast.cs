@@ -1,4 +1,5 @@
-﻿namespace SpecFlow.PoC.Features;
+﻿#pragma warning disable CS1591
+namespace SpecFlow.PoC.Features;
 
 public class WeatherForecast
 {

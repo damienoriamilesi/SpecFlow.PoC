@@ -25,7 +25,7 @@ namespace SpecFlow.PoC.BDD.Tests.Features
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private string[] _featureTags = new string[] {
+        private static string[] featureTags = new string[] {
                 "calculator"};
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
@@ -49,8 +49,7 @@ Simple calculator for adding **two** numbers
 
 [BUG] - LINK TO FEATURE => The search input is located on the [Home Screen](<~/Projects/SpecFlow.PoC/SpecFlow.PoC.BDD.Tests/Features/FirstScenario.feature>).
 	
-<a href=""#/document/Standalone/feature/f380c9824c9be2e696ef7cbdbac6f572"">Context Diagram</a>", ProgrammingLanguage.CSharp, new string[] {
-                        "calculator"});
+<a href=""#/document/Standalone/feature/f380c9824c9be2e696ef7cbdbac6f572"">Context Diagram</a>", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -60,27 +59,27 @@ Simple calculator for adding **two** numbers
             testRunner = null;
         }
         
-        public virtual void TestInitialize()
+        public void TestInitialize()
         {
         }
         
-        public virtual void TestTearDown()
+        public void TestTearDown()
         {
             testRunner.OnScenarioEnd();
         }
         
-        public virtual void ScenarioInitialize(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
+        public void ScenarioInitialize(TechTalk.SpecFlow.ScenarioInfo scenarioInfo)
         {
             testRunner.OnScenarioInitialize(scenarioInfo);
             testRunner.ScenarioContext.ScenarioContainer.RegisterInstanceAs<Xunit.Abstractions.ITestOutputHelper>(_testOutputHelper);
         }
         
-        public virtual void ScenarioStart()
+        public void ScenarioStart()
         {
             testRunner.OnScenarioStart();
         }
         
-        public virtual void ScenarioCleanup()
+        public void ScenarioCleanup()
         {
             testRunner.CollectScenarioErrors();
         }
@@ -95,7 +94,7 @@ Simple calculator for adding **two** numbers
         [Xunit.TraitAttribute("Description", "Add two numbers")]
         [Xunit.TraitAttribute("Category", "my-tag")]
         [Xunit.TraitAttribute("Category", "AX-22-AZERTY")]
-        public virtual void AddTwoNumbers()
+        public void AddTwoNumbers()
         {
             string[] tagsOfScenario = new string[] {
                     "my-tag",
@@ -103,21 +102,11 @@ Simple calculator for adding **two** numbers
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", "\t***Further read***: \n\t**[Learn more about how to generate Living Documentation](" +
                     "https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerat" +
-                    "or/Generating-Documentation.html)**", tagsOfScenario, argumentsOfScenario, this._featureTags);
+                    "or/Generating-Documentation.html)**", tagsOfScenario, argumentsOfScenario, featureTags);
 #line 16
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
-            bool isScenarioIgnored = default(bool);
-            bool isFeatureIgnored = default(bool);
-            if ((tagsOfScenario != null))
-            {
-                isScenarioIgnored = tagsOfScenario.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
-            }
-            if ((this._featureTags != null))
-            {
-                isFeatureIgnored = this._featureTags.Where(__entry => __entry != null).Where(__entry => String.Equals(__entry, "ignore", StringComparison.CurrentCultureIgnoreCase)).Any();
-            }
-            if ((isScenarioIgnored || isFeatureIgnored))
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
             {
                 testRunner.SkipScenario();
             }

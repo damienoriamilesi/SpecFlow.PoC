@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using HealthChecks.Sqlite;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -27,10 +26,12 @@ builder.Services.AddControllers(config =>
     config.Filters.Add<DatProtectionActionFilter>();
     //config.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
 });
-builder.Services.AddHealthChecks().AddCheck("SQLite Db", new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
+
+builder.Services.AddHealthChecks()
+    .AddCheck("SQLite Db", new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-builder.Services.AddOpenApiDocumentation();
+builder.Services.AddOpenApiDocumentation(builder.Configuration);
 
 builder.Services.AddResponseCaching(cfg => { });
 
@@ -47,9 +48,7 @@ if (app.Environment.IsDevelopment())
     //app.UseHsts();
     app.UseSwagger().UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1");
-        options.OAuthClientId("MySampleAPIName");
-        options.OAuthClientSecret("test42");
+        options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1"); 
     });
 }
 //app.UseHttpsRedirection();
@@ -77,7 +76,7 @@ app.UseResponseCaching();
 app.UseEndpoints(endpoint =>
 {
     endpoint.MapMetrics();
-    endpoint.MapControllers();
+    endpoint.MapControllers().RequireAuthorization();
     endpoint.MapHealthChecks("health", new HealthCheckOptions
     {
         ResponseWriter = WriteResponse
@@ -85,8 +84,6 @@ app.UseEndpoints(endpoint =>
 });
 
 app.Run();
-
-
 
 static Task WriteResponse(HttpContext context, HealthReport healthReport)
 {
