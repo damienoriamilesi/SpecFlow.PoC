@@ -8,20 +8,18 @@ public class TarmedAgeRuleFeature
     private readonly BillingControlRequest _billingRequest = new ();
     private BillingControlResponse _billingControlResponse = new ();
 
-    [Given(@"a service with position with age constraint")]
-    public void GivenAServiceWithPositionWithAgeConstraint()
+    [Given(@"a service with age position constraint like '(.*)'")]
+    public void GivenAServiceWithPositionWithAgeConstraint(string positionCode)
     {
-        var service = new TarmedService();
-        service.PositionCode = "25.1234";
-
+        var service = new TarmedService { PositionCode = positionCode };
         _billingRequest.TarmedServices = new[] { service };
     }
 
-    [Given(@"a patient who is outside the rule age")]
-    public void GivenAPatientWhoIsOutsideTheRuleAge()
+    [Given(@"a patient whose age is outside the rule age of the position constraint : '(.*)'")]
+    public void GivenAPatientWhoIsOutsideTheRuleAge(int limitAge)
     {
         var patient = new Patient();
-        patient.BirthDate = new DateTime(2014, 4, 10);
+        patient.BirthDate = DateTime.Now.AddYears(-6).AddDays(-1);
         _billingRequest.Patient = patient;
     }
 
@@ -54,7 +52,7 @@ public class BillingValorization
         var age = DateTime.Now.Ticks - billingRequest.Patient!.BirthDate.Ticks;
         if (age > 6)
         {
-            errors.Add("TAR_AGE_MIN - Age minimum requis pour cette position");
+            errors.Add($"TAR_AGE_MIN - Age minimum requis pour cette position : { age }");
         }
 
         response.Errors = errors.ToArray();
