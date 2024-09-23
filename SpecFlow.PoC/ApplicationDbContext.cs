@@ -8,11 +8,10 @@ namespace SpecFlow.PoC;
 public class ApplicationDbContext : DbContext
 {
     /// <inheritdoc />
-    public ApplicationDbContext(DbContextOptions options, DbSet<Employee> employees) : base(options)
+    public ApplicationDbContext(DbContextOptions options) : base(options)
     {
-        Employees = employees;
     }
-    public DbSet<Employee> Employees { get; set; }
+    public virtual DbSet<Employee> Employees { get; set; }
 }
 
 internal static class TestFixture

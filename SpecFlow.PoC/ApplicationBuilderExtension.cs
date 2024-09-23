@@ -1,4 +1,7 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
 #pragma warning disable CS1591
@@ -89,5 +92,34 @@ public static class ApplicationBuilderExtension
         if (dbContext.Employees.Any()) return;
         dbContext.Employees.AddRange(TestFixture.BuildEmployees());
         dbContext.SaveChanges();
+    }
+    
+    public static Task ValidateToken(MessageReceivedContext context)
+    {
+        try
+        {
+            //context.Token = GetToken(context.Request);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(context.Token, context.Options.TokenValidationParameters, out var validatedToken);
+
+            var jwtSecurityToken = validatedToken as JwtSecurityToken;
+
+            context.Principal = new ClaimsPrincipal();
+
+            var claimsIdentity = new ClaimsIdentity(jwtSecurityToken.Claims.ToList(),
+                "JwtBearerToken", ClaimTypes.NameIdentifier, ClaimTypes.Role);
+            context.Principal.AddIdentity(claimsIdentity);
+
+            context.Success();
+
+            return Task.CompletedTask;
+        }
+        catch (Exception e)
+        {
+            context.Fail(e);
+        }
+
+        return Task.CompletedTask;
     }
 }

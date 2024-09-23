@@ -1,24 +1,91 @@
-﻿using System.Text;
-using System.Text.Json;
-using HealthChecks.Sqlite;
+﻿using HealthChecks.Sqlite;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.OpenApi.Models;
 using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataProtection();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>(options =>
     //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-    options.UseSqlite("Data Source=SQLiteSample.db")
+    options.UseSqlite("Filename=SQLiteSample.db")
 );
+
+//http://localhost:8080/realms/DEV/.well-known/openid-configuration
+//http://localhost:8080/realms/DEV/protocol/openid-connect/certs
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.Authority = "http://localhost:8080/realms/DEV";
+        options.Audience = "CoreBusinessService";
+        //options.SaveToken = true;
+        //options.
+        
+        var jwkFileContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jwk.json"));
+        var jsonWebKeySet = new JsonWebKeySet(jwkFileContent);
+        options.IncludeErrorDetails = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            //IssuerSigningKey = 
+                //new JsonWebKey(jwkFileContent),
+            //IssuerSigningKey = 
+                //new SymmetricSecurityKey(Convert.FromBase64String("KyOr6CRQmsbyxCAki2ZJmMz7HpiwpZkJ")), 
+                ValidAudience = "CoreBusinessService", 
+            ClockSkew = TimeSpan.Zero,
+            //IssuerSigningKeyValidator = (key, token, parameters) => 
+            //IssuerSigningKeyResolver = (s, securityToken, identifier, parameters) => jsonWebKeySet.Keys.Select(x=>x.),
+
+            //IssuerSigningKeyResolverUsingConfiguration = 
+            //SignatureValidator = (token, _) => new JsonWebToken(token)
+            /*SignatureValidator = (token, x) =>
+            {
+                 var result = new JsonWebTokenHandler().ValidateToken(token, x);
+                 if (result.IsValid) return new JsonWebToken(token);
+                 throw new SecurityTokenException("bvzbveizmb");
+            }*/
+        };
+    });
+
+builder.Services.AddSwaggerGen(setup =>
+{
+    // Include 'SecurityScheme' to use JWT Authentication
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        BearerFormat = "JWT",
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtSecurityScheme, Array.Empty<string>() }
+    });
+
+});
 
 // Add services to the container.
 builder.Services.AddControllers(config =>
@@ -28,7 +95,9 @@ builder.Services.AddControllers(config =>
 });
 
 builder.Services.AddHealthChecks()
-    .AddCheck("SQLite Db", new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
+    .AddCheck("SQLite Db", 
+        new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
+        
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 builder.Services.AddOpenApiDocumentation(builder.Configuration);
@@ -40,7 +109,7 @@ builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
 
 var app = builder.Build();
 
-app.Services.AddEntityFramework();
+//app.Services.AddEntityFramework();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -70,7 +139,20 @@ app.UseHttpMetrics(options=>
 
 app.UseAuthentication();
 app.UseAuthorization();
+/*
+app.Use(_ => { var tokenHandler = new JwtSecurityTokenHandler();
+    try
+    {
+        tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+        return validatedToken != null;
+    }
+    catch (Exception)
+    {
+        return false;
+    } });
     
+*/
+
 app.UseResponseCaching();
 
 app.UseEndpoints(endpoint =>
@@ -79,50 +161,8 @@ app.UseEndpoints(endpoint =>
     endpoint.MapControllers().RequireAuthorization();
     endpoint.MapHealthChecks("health", new HealthCheckOptions
     {
-        ResponseWriter = WriteResponse
+        ResponseWriter = HealthCheckExtension.WriteResponse
     });
 });
 
 app.Run();
-
-static Task WriteResponse(HttpContext context, HealthReport healthReport)
-{
-context.Response.ContentType = "application/json; charset=utf-8";
-
-var options = new JsonWriterOptions { Indented = true };
-
-using var memoryStream = new MemoryStream();
-using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
-{
-jsonWriter.WriteStartObject();
-jsonWriter.WriteString("status", healthReport.Status.ToString());
-jsonWriter.WriteStartObject("results");
-
-foreach (var healthReportEntry in healthReport.Entries)
-{
-    jsonWriter.WriteStartObject(healthReportEntry.Key);
-    jsonWriter.WriteString("status",
-        healthReportEntry.Value.Status.ToString());
-    jsonWriter.WriteString("description",
-        healthReportEntry.Value.Description);
-    jsonWriter.WriteStartObject("data");
-
-    foreach (var item in healthReportEntry.Value.Data)
-    {
-        jsonWriter.WritePropertyName(item.Key);
-
-        JsonSerializer.Serialize(jsonWriter, item.Value,
-            item.Value?.GetType() ?? typeof(object));
-    }
-
-    jsonWriter.WriteEndObject();
-    jsonWriter.WriteEndObject();
-}
-
-jsonWriter.WriteEndObject();
-jsonWriter.WriteEndObject();
-}
-
-return context.Response.WriteAsync(
-Encoding.UTF8.GetString(memoryStream.ToArray()));
-}
