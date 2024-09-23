@@ -47,35 +47,7 @@ builder.Services
         };
     });
 
-builder.Services.AddOpenApiDocumentation(builder.Configuration);
-builder.Services.AddSwaggerGen(setup =>
-{
-    // Include 'SecurityScheme' to use JWT Authentication
-    var jwtSecurityScheme = new OpenApiSecurityScheme
-    {
-        BearerFormat = "JWT",
-        Name = "JWT Authentication",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.Http,
-        Scheme = JwtBearerDefaults.AuthenticationScheme,
-        Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-        Reference = new OpenApiReference
-        {
-            Id = JwtBearerDefaults.AuthenticationScheme,
-            Type = ReferenceType.SecurityScheme
-        }
-    };
-
-    setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
-    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        { jwtSecurityScheme, Array.Empty<string>() }
-    });
-    
-    //var filePath = Path.Combine(AppContext.BaseDirectory, "Toto.xml");
-    setup.IncludeXmlComments(typeof(WeatherForecastController).Assembly);
-});
+builder.Services.AddOpenApiDocumentationSecurity();
 
 // Add services to the container.
 builder.Services.AddControllers(config =>
@@ -106,7 +78,7 @@ if (app.Environment.IsDevelopment())
     //app.UseHsts();
     app.UseSwagger().UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("v1/swagger.json", "WeatherAPI - v1"); 
+        options.SwaggerEndpoint("v1/swagger.json", "v1"); 
     });
 }
 //app.UseHttpsRedirection();

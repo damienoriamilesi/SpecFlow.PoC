@@ -4,6 +4,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
+using SpecFlow.PoC.Controllers;
+
 #pragma warning disable CS1591
 
 public static class ApplicationBuilderExtension
@@ -54,6 +56,36 @@ public static class ApplicationBuilderExtension
         });
     }
 
+    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services)
+    {
+        services.AddSwaggerGen(setup =>
+        {
+            // Include 'SecurityScheme' to use JWT Authentication
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "JWT Authentication",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+
+            setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+            setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                { jwtSecurityScheme, Array.Empty<string>() }
+            });
+            
+            setup.IncludeXmlComments(typeof(WeatherForecastController).Assembly);
+        });
+    }
     public static void AddOpenApiStandardBasic(this IServiceCollection services)
     {
         services.AddSwaggerGen(options => {

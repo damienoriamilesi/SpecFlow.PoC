@@ -1,10 +1,13 @@
-﻿using MediatR;
+﻿using System.ComponentModel;
+using MediatR;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
+using Swashbuckle.AspNetCore.Filters;
+
 #pragma warning disable CS1591
 
 namespace SpecFlow.PoC.Controllers;
@@ -67,6 +70,7 @@ public class WeatherForecastController : ControllerBase
     /// <summary>
     /// JUST DO IT with a parameter
     /// </summary>
+    /// <example>42</example>
     /// <returns></returns>
     [HttpGet("{id:int}" ,Name = "GetWeatherForecastWithParam")]
     [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
@@ -108,11 +112,9 @@ public class WeatherForecastController : ControllerBase
     /// Add new weather forecast
     /// </summary>
     /// <param name="request"></param>
-    /// <example>{"forecasts": [{"weatherType": "Sunny","temperature": 15}]}</example>
     /// <returns></returns>
+    [SwaggerRequestExample(typeof(CreateWeatherForecastRequest),typeof(CreateWeatherForecastRequestExample))]
     [HttpPost]
-    //[DefaultValue(typeof(CreateWeatherForecastRequest), "{ 'Forecasts': [{ 'WeatherType' : 'Sunny', 'Temperature': 25 }]")]
-    
     public IActionResult Create([FromBody] CreateWeatherForecastRequest request)
     {
         return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
@@ -135,5 +137,13 @@ public class DataProtectionActionFilter : IActionFilter
         // Do something after the action executes.
         // For each property decorated with DataProtection
         var instanceFromResponse = context.Result!.GetType().GetProperties();
+    }
+}
+
+public class CreateWeatherForecastRequestExample : IExamplesProvider<CreateWeatherForecastRequest>
+{
+    public CreateWeatherForecastRequest GetExamples()
+    {
+        return new CreateWeatherForecastRequest(new []{new Forecast("Sunny", 42)});
     }
 }
