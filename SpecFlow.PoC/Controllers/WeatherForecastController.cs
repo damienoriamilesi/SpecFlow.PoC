@@ -123,7 +123,7 @@ public record CreateWeatherForecastRequest(Forecast[] Forecasts);
 
 public record Forecast(string WeatherType, int Temperature);
 
-public class DatProtectionActionFilter : IActionFilter
+public class DataProtectionActionFilter : IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {

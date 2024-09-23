@@ -28,38 +28,26 @@ builder.Services
     })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.Authority = "http://localhost:8080/realms/DEV";
+        options.RequireHttpsMetadata = true;
         options.Audience = "CoreBusinessService";
-        //options.SaveToken = true;
-        //options.
         
-        var jwkFileContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jwk.json"));
-        var jsonWebKeySet = new JsonWebKeySet(jwkFileContent);
         options.IncludeErrorDetails = true;
+
+        //options.Authority = "http://localhost:8080/realms/DEV";
+        var jwkFileContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jwk.json"));
         options.TokenValidationParameters = new TokenValidationParameters
         {
+            // If authority is specified, no need to validate signature
+            ValidIssuer = "http://localhost:8080/realms/DEV",
             ValidateIssuerSigningKey = true,
-            //IssuerSigningKey = 
-                //new JsonWebKey(jwkFileContent),
-            //IssuerSigningKey = 
-                //new SymmetricSecurityKey(Convert.FromBase64String("KyOr6CRQmsbyxCAki2ZJmMz7HpiwpZkJ")), 
-                ValidAudience = "CoreBusinessService", 
-            ClockSkew = TimeSpan.Zero,
-            //IssuerSigningKeyValidator = (key, token, parameters) => 
-            //IssuerSigningKeyResolver = (s, securityToken, identifier, parameters) => jsonWebKeySet.Keys.Select(x=>x.),
-
-            //IssuerSigningKeyResolverUsingConfiguration = 
-            //SignatureValidator = (token, _) => new JsonWebToken(token)
-            /*SignatureValidator = (token, x) =>
-            {
-                 var result = new JsonWebTokenHandler().ValidateToken(token, x);
-                 if (result.IsValid) return new JsonWebToken(token);
-                 throw new SecurityTokenException("bvzbveizmb");
-            }*/
+            IssuerSigningKey = new JsonWebKey(jwkFileContent),
+            //ValidAudience = "CoreBusinessService", 
+            //ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 
+builder.Services.AddOpenApiDocumentation(builder.Configuration);
 builder.Services.AddSwaggerGen(setup =>
 {
     // Include 'SecurityScheme' to use JWT Authentication
@@ -84,13 +72,15 @@ builder.Services.AddSwaggerGen(setup =>
     {
         { jwtSecurityScheme, Array.Empty<string>() }
     });
-
+    
+    //var filePath = Path.Combine(AppContext.BaseDirectory, "Toto.xml");
+    setup.IncludeXmlComments(typeof(WeatherForecastController).Assembly);
 });
 
 // Add services to the container.
 builder.Services.AddControllers(config =>
 {
-    config.Filters.Add<DatProtectionActionFilter>();
+    config.Filters.Add<DataProtectionActionFilter>();
     //config.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
 });
 
@@ -100,7 +90,6 @@ builder.Services.AddHealthChecks()
         
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
-builder.Services.AddOpenApiDocumentation(builder.Configuration);
 
 builder.Services.AddResponseCaching(cfg => { });
 
