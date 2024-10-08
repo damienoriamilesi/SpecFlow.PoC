@@ -10,3 +10,4 @@ Scenario: Check age compatibility of a service line from a billing request
 Examples: 
   	| positionCode | LimitAge |
     | 00.0040      | 6        |
+    | 00.0030      | 75       |
