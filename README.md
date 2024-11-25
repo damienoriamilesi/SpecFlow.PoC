@@ -48,6 +48,7 @@ Finally, add the following to seed the Db if needed
 
 ## <b>Install Prometheus and Grafana as a Docker container
 
+> docker run -p 9090:9090 prom/prometheus
 
 https://docs.docker.com/config/daemon/prometheus/
 
