@@ -4,6 +4,7 @@
 # Add Open API Standard Support
 
 Microcks - Cron Job interval : https://crontab.guru/#*_*_*_*_* (Help to format interval)
+Example: https://raw.githubusercontent.com/damienoriamilesi/SpecFlow.PoC/master/SpecFlow.PoC/swagger.json
 
 # Caching
 
