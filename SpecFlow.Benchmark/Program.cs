@@ -2,4 +2,4 @@
 
 using BenchmarkDotNet.Running;
 
-BenchmarkRunner.Run()
+//BenchmarkRunner.Run()
