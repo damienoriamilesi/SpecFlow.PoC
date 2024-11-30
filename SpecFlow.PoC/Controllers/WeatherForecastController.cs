@@ -123,6 +123,12 @@ public class WeatherForecastController : ControllerBase
     {
         return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
     }
+    
+    [HttpGet("/test/{toto}",Name = "GetById42")]
+    public IActionResult GetById42(string toto)
+    {
+        return Ok(42);
+    }
 }
 
 public record CreateWeatherForecastRequest(Forecast[] Forecasts);

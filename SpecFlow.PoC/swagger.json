@@ -217,6 +217,29 @@
           }
         }
       }
+    },
+    "/test/{toto}": {
+      "get": {
+        "tags": [
+          "WeatherForecast"
+        ],
+        "operationId": "GetById42",
+        "parameters": [
+          {
+            "name": "toto",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
