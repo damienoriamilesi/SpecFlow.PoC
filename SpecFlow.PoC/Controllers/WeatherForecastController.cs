@@ -124,8 +124,14 @@ public class WeatherForecastController : ControllerBase
         return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
     }
     
-    [HttpGet("/test/{toto}",Name = "GetById42")]
+    [HttpGet("/test42/{toto}",Name = "GetById42")]
     public IActionResult GetById42(string toto)
+    {
+        return Ok(42);
+    }
+    
+    [HttpGet("/test666/{toto}",Name = "GetById666")]
+    public IActionResult GetById666(string toto)
     {
         return Ok(42);
     }
