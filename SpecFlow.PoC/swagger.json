@@ -240,29 +240,6 @@
           }
         }
       }
-    },
-    "/test666/{toto}": {
-      "get": {
-        "tags": [
-          "WeatherForecast"
-        ],
-        "operationId": "GetById666",
-        "parameters": [
-          {
-            "name": "toto",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
