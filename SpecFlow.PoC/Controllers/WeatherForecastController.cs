@@ -130,11 +130,11 @@ public class WeatherForecastController : ControllerBase
         return Ok(42);
     }
     
-    [HttpGet("/test666/{toto}",Name = "GetById666")]
-    public IActionResult GetById666(string toto)
-    {
-        return Ok(666);
-    }
+    // [HttpGet("/test666/{toto}",Name = "GetById666")]
+    // public IActionResult GetById666(string toto)
+    // {
+    //     return Ok(666);
+    // }
 }
 
 public record CreateWeatherForecastRequest(Forecast[] Forecasts);

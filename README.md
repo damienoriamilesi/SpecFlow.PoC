@@ -3,8 +3,17 @@
 
 # Add Open API Standard Support
 
-Microcks - Cron Job interval : https://crontab.guru/#*_*_*_*_* (Help to format interval)
+docker run -p 8585:8080 -it --rm quay.io/microcks/microcks-uber:latest-native 
+
+Microcks - Cron Job interval :  https://microcks.io/documentation/guides/usage/importing-content/
+services.update.interval=${SERVICES_UPDATE_INTERVAL:0 0 0/2 * * *}
+
+https://crontab.guru/#*_*_*_*_* (Help to format interval)
+
 Example: https://raw.githubusercontent.com/damienoriamilesi/SpecFlow.PoC/master/SpecFlow.PoC/swagger.json
+
+## Exec commands inside the container
+docker exec -it d619f95ec002 /bin/bash
 
 # Caching
 
