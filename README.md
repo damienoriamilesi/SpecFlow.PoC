@@ -3,6 +3,8 @@
 
 # Add Open API Standard Support
 
+Microcks - Cron Job interval : https://crontab.guru/#*_*_*_*_* (Help to format interval)
+
 # Caching
 
 Adding Response caching 
