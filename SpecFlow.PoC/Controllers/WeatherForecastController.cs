@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using BenchmarkDotNet.Attributes;
 using MediatR;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
 using Swashbuckle.AspNetCore.Filters;
-
 #pragma warning disable CS1591
 
 namespace SpecFlow.PoC.Controllers;
@@ -132,7 +129,7 @@ public record CreateWeatherForecastRequest(Forecast[] Forecasts);
 
 public record Forecast(string WeatherType, int Temperature);
 
-public class DataProtectionActionFilter : IActionFilter
+public abstract class DataProtectionActionFilter : IActionFilter
 {
     public void OnActionExecuting(ActionExecutingContext context)
     {

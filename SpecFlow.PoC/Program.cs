@@ -1,9 +1,14 @@
-﻿using HealthChecks.Sqlite;
+﻿using System;
+using System.IO;
+using HealthChecks.Sqlite;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
@@ -47,7 +52,7 @@ builder.Services
         };
     });
 
-builder.Services.AddOpenApiDocumentationSecurity();
+    builder.Services.AddOpenApiDocumentationSecurity();
 
 // Add services to the container.
 builder.Services.AddControllers(config =>

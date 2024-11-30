@@ -1,5 +1,8 @@
+using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace SpecFlow.PoC;
@@ -15,9 +18,9 @@ public class HealthCheckExtension
     /// <param name="context"></param>
     /// <param name="healthReport"></param>
     /// <returns></returns>
-    public static Task WriteResponse(HttpContext context, HealthReport healthReport)
+    public static Task WriteResponse(HttpContext httpContext, HealthReport healthReport)
     {
-        context.Response.ContentType = "application/json; charset=utf-8";
+        httpContext.Response.ContentType = "application/json; charset=utf-8";
 
         var options = new JsonWriterOptions { Indented = true };
 
@@ -53,7 +56,7 @@ public class HealthCheckExtension
             jsonWriter.WriteEndObject();
         }
 
-        return context.Response.WriteAsync(
+        return httpContext.Response.WriteAsync(
             Encoding.UTF8.GetString(memoryStream.ToArray()));
     }
 }

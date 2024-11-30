@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
@@ -22,12 +22,6 @@
     <!--<PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.1" />-->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="BenchmarkDotNet.Annotations">
-      <HintPath>..\..\..\.nuget\packages\benchmarkdotnet.annotations\0.14.0\lib\netstandard2.0\BenchmarkDotNet.Annotations.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Target Name="CreateSwaggerJson" AfterTargets="PostBuildEvent">
       <Exec Command="dotnet swagger tofile --output ./swagger.json $(OutputPath)$(AssemblyName).dll v1" />
