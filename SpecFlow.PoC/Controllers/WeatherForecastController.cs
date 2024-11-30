@@ -133,7 +133,7 @@ public class WeatherForecastController : ControllerBase
     [HttpGet("/test666/{toto}",Name = "GetById666")]
     public IActionResult GetById666(string toto)
     {
-        return Ok(42);
+        return Ok(666);
     }
 }
 
