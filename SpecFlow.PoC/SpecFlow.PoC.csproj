@@ -23,9 +23,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
   </ItemGroup>
-  <Target Name="CreateSwaggerJson" AfterTargets="PostBuildEvent" Condition="$(ConfigurationName) == Debug">
+  <Target Name="CreateSwaggerJson" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='Debug'">
       <Exec Command="dotnet swagger tofile --output ./swagger.json $(OutputPath)$(AssemblyName).dll v1" />
     </Target> 
 </Project>
-
-
