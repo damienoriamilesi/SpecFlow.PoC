@@ -1,12 +1,20 @@
+using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
 
 #pragma warning disable CS1591
+
+namespace SpecFlow.PoC;
 
 public static class ApplicationBuilderExtension
 {
@@ -22,7 +30,7 @@ public static class ApplicationBuilderExtension
                 {
                     Implicit = new OpenApiOAuthFlow
                     {
-                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]),
+                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]!),
                         Scopes = new Dictionary<string, string> { { "openid", "openid" }, { "profile", "profile" } }
                     }
                     , AuthorizationCode = new OpenApiOAuthFlow
@@ -139,7 +147,7 @@ public static class ApplicationBuilderExtension
 
             context.Principal = new ClaimsPrincipal();
 
-            var claimsIdentity = new ClaimsIdentity(jwtSecurityToken.Claims.ToList(),
+            var claimsIdentity = new ClaimsIdentity(jwtSecurityToken!.Claims.ToList(),
                 "JwtBearerToken", ClaimTypes.NameIdentifier, ClaimTypes.Role);
             context.Principal.AddIdentity(claimsIdentity);
 

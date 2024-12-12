@@ -1,9 +1,12 @@
 ﻿using System;
 using System.IO;
+using System.Net.Mime;
 using HealthChecks.Sqlite;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,13 +56,15 @@ builder.Services
         };
     });
 
-    builder.Services.AddOpenApiDocumentationSecurity();
+builder.Services.AddOpenApiDocumentationSecurity();
 
 // Add services to the container.
-builder.Services.AddControllers(config =>
+builder.Services.AddControllers(options =>
 {
-    config.Filters.Add<DataProtectionActionFilter>();
-    //config.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
+    options.Filters.Add(new ProducesAttribute(MediaTypeNames.Application.Json));
+    options.Filters.Add(new ConsumesAttribute(MediaTypeNames.Application.Json));
+    options.Filters.Add<DataProtectionActionFilter>();
+    //options.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
 });
 
 builder.Services.AddHealthChecks()

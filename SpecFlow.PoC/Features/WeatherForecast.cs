@@ -1,4 +1,6 @@
-﻿#pragma warning disable CS1591
+﻿using System;
+
+#pragma warning disable CS1591
 namespace SpecFlow.PoC.Features;
 
 public class WeatherForecast
@@ -24,7 +26,7 @@ public class WeatherForecast
     /// <summary>
     /// Summary of the forecast
     /// </summary>
-    /// <example>fjmnzeamjvknaerjmvnaerjn</example>
-    public string? Summary { get; set; }
+    /// <example>Should be sunny tomorrow</example>
+    public string Summary { get; set; }
 }
 

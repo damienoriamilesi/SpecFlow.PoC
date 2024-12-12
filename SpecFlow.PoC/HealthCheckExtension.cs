@@ -15,7 +15,7 @@ public class HealthCheckExtension
     /// <summary>
     /// Get Healthcheck custom status
     /// </summary>
-    /// <param name="context"></param>
+    /// <param name="httpContext"></param>
     /// <param name="healthReport"></param>
     /// <returns></returns>
     public static Task WriteResponse(HttpContext httpContext, HealthReport healthReport)
@@ -45,7 +45,7 @@ public class HealthCheckExtension
                     jsonWriter.WritePropertyName(item.Key);
 
                     JsonSerializer.Serialize(jsonWriter, item.Value,
-                        item.Value?.GetType() ?? typeof(object));
+                        item.Value.GetType());
                 }
 
                 jsonWriter.WriteEndObject();

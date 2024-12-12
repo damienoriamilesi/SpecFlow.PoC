@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using SpecFlow.PoC.Features;
 #pragma warning disable CS1591

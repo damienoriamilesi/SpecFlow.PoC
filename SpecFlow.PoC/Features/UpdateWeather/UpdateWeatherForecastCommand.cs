@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using MediatR;
 #pragma warning disable CS1591
 
@@ -5,7 +8,7 @@ namespace SpecFlow.PoC.Features.UpdateWeather;
 
 public class UpdateWeatherForecastCommand : IRequest<int>
 {
-    public WeatherForecast? WeatherForecast { get; set; }
+    public WeatherForecast WeatherForecast { get; set; }
 }
 public record WeatherUpdatedNotification(WeatherForecast WeatherForecast) : INotification;
 
