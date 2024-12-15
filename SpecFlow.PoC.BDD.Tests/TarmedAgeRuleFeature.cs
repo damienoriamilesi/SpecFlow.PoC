@@ -6,7 +6,7 @@ namespace SpecFlow.PoC.BDD.Tests;
 public class TarmedAgeRuleFeature
 {
     private readonly BillingControlRequest _billingRequest = new ();
-    private BillingControlResponse _billingControlResponse = new ();
+    private BillingControlResponse _billingControlResponse = new(null,null);
 
     [Given(@"a service with age position constraint like '(.*)'")]
     public void GivenAServiceWithPositionWithAgeConstraint(string positionCode)
@@ -37,26 +37,16 @@ public class TarmedAgeRuleFeature
     }
 }
 
-public class BillingControlResponse
-{
-    public string[] Errors { get; set; }
-    public string[] Warnings { get; set; }
-}
+public record BillingControlResponse(string[] Errors, string[] Warnings);
 
 public class BillingValorization
 {
     public BillingControlResponse Control(BillingControlRequest billingRequest)
     {
-        var response = new BillingControlResponse();
         var errors = new List<string>();
         var age = DateTime.Now.Ticks - billingRequest.Patient!.BirthDate.Ticks;
-        if (age > 6)
-        {
-            errors.Add($"TAR_AGE_MIN - Age minimum requis pour cette position : { age }");
-        }
-
-        response.Errors = errors.ToArray();
-
+        if (age > 6) errors.Add($"TAR_AGE_MIN - Age minimum requis pour cette position : { age }");
+        var response = new BillingControlResponse(errors.ToArray(), null!);
         return response;
     }
 }

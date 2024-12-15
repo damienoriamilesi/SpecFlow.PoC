@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,10 @@ namespace SpecFlow.PoC.Controllers;
 /// Weather forecast
 /// </summary>
 [ApiController]
-[Route("api/[controller]s")]
+[ApiVersion(1)]
+[ApiVersion(2)]
+
+[Route("api/v{version:apiVersion}/[controller]s")]
 public class WeatherForecastController : ControllerBase
 {
     private static readonly string[] Summaries = {
@@ -53,10 +57,11 @@ public class WeatherForecastController : ControllerBase
     /// JUST DO IT
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetWeatherForecast")]
+    [HttpGet(Name = "{apiVersion:Version}/GetWeatherForecast")]
     [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [MapToApiVersion(1)]
     public IEnumerable<WeatherForecast> Get()
     {
         var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -123,13 +128,13 @@ public class WeatherForecastController : ControllerBase
         return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
     }
     
-    [HttpGet("/test42/{toto}",Name = "GetById42")]
+    [HttpGet("test42/{toto}",Name = "GetById42")]
     public IActionResult GetById42(string toto)
     {
         return Ok(42);
     }
     
-    [HttpGet("/test666/{toto}",Name = "GetById666")]
+    [HttpGet("test666/{toto}",Name = "GetById666")]
     public IActionResult GetById666(string toto)
     {
         return Ok(666);

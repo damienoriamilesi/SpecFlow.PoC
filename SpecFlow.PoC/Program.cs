@@ -1,22 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Net.Mime;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using HealthChecks.Sqlite;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,9 +38,7 @@ builder.Services
     {
         options.RequireHttpsMetadata = true;
         options.Audience = "CoreBusinessService";
-        
         options.IncludeErrorDetails = true;
-
         //options.Authority = "http://localhost:8080/realms/DEV";
         var jwkFileContent = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "jwk.json"));
         options.TokenValidationParameters = new TokenValidationParameters
@@ -57,39 +54,47 @@ builder.Services
     });
 
 builder.Services.AddOpenApiDocumentationSecurity();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 // Add services to the container.
-builder.Services.AddControllers(options =>
-{
+builder.Services.AddControllers(options => {
     options.Filters.Add(new ProducesAttribute(MediaTypeNames.Application.Json));
     options.Filters.Add(new ConsumesAttribute(MediaTypeNames.Application.Json));
     options.Filters.Add<DataProtectionActionFilter>();
     //options.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
 });
+builder.Services.AddApiVersioning(options => {
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+}).AddMvc().AddApiExplorer(options => {
+    options.GroupNameFormat = "'v'V";
+    options.SubstituteApiVersionInUrl = true;
+});
 
-builder.Services.AddHealthChecks()
-    .AddCheck("SQLite Db", 
-        new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
-        
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks().AddCheck("SQLite Db", new SqliteHealthCheck("Data Source=SQLiteSample.db", $"SELECT 1 FROM {nameof(Employee)}s"));
+
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 
-builder.Services.AddResponseCaching(cfg => { });
+//TODO > Implement
+builder.Services.AddResponseCaching();
 
-//DependencyInjection
 builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
-
 var app = builder.Build();
-
-//app.Services.AddEntityFramework();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     //app.UseHsts();
-    app.UseSwagger().UseSwaggerUI(options =>
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("v1/swagger.json", "v1"); 
+        var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint($"{description.GroupName}/swagger.json", $"{description.GroupName.ToUpperInvariant()} - test");
+        }
     });
 }
 //app.UseHttpsRedirection();

@@ -1,165 +1,133 @@
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
+using System.Net;
 using System.Reflection;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC.Controllers;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 #pragma warning disable CS1591
 
 namespace SpecFlow.PoC;
 
-public static class ApplicationBuilderExtension
+public static class SwaggerBuilderExtension
 {
-    public static void AddOpenApiDocumentation(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new OpenApiInfo { Title = "My sample API", Version = "v1" });
-            options.AddSecurityDefinition("Keycloak", new OpenApiSecurityScheme
-            {
-                Type = SecuritySchemeType.OpenIdConnect,
-                Flows = new OpenApiOAuthFlows
-                {
-                    Implicit = new OpenApiOAuthFlow
-                    {
-                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]!),
-                        Scopes = new Dictionary<string, string> { { "openid", "openid" }, { "profile", "profile" } }
-                    }
-                    , AuthorizationCode = new OpenApiOAuthFlow
-                    {
-                        AuthorizationUrl = new Uri(configuration["Secrets:AuthorizationUrl"]),
-                        
-                    }
-                }
-            });
-    
-            OpenApiSecurityScheme keycloakSecurityScheme = new()
-            {
-                Reference = new OpenApiReference
-                {
-                    Id = "Keycloak",
-                    Type = ReferenceType.SecurityScheme,
-                },
-                In = ParameterLocation.Header,
-                Name = "Bearer",
-                Scheme = "Bearer",
-            };
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                { keycloakSecurityScheme, Array.Empty<string>() },
-            });
-    
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            options.IncludeXmlComments(xmlPath);
-        });
-    }
-
     public static void AddOpenApiDocumentationSecurity(this IServiceCollection services)
     {
-        services.AddSwaggerGen(setup =>
+        services.AddSwaggerGen();
+    }
+
+    public static OpenApiInfo GetOpenApiInfo(ApiVersionDescription apiVersionDescription)
+    {
+        return new OpenApiInfo
         {
-            // Include 'SecurityScheme' to use JWT Authentication
-            var jwtSecurityScheme = new OpenApiSecurityScheme
+            Title = "WeatherAPI",
+            Description = "TODO > Describe",
+            Version = apiVersionDescription.GroupName + "API",
+            TermsOfService = new Uri("https://www.google.fr"),
+            Contact = new OpenApiContact
             {
-                BearerFormat = "JWT",
-                Name = "JWT Authentication",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Scheme = JwtBearerDefaults.AuthenticationScheme,
-                Description = "Put **_ONLY_** your JWT Bearer token on textbox below!",
-                Reference = new OpenApiReference
-                {
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                    Type = ReferenceType.SecurityScheme
-                }
-            };
-
-            setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-
-            setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+                Name = "Author",
+                Url = new Uri("https://www.contact@gmail.com"),
+                Email = "toto@gmail.com"
+            },
+            License = new OpenApiLicense
             {
-                { jwtSecurityScheme, Array.Empty<string>() }
-            });
-            
-            setup.IncludeXmlComments(typeof(WeatherForecastController).Assembly);
-        });
+                Name = "License",
+                Url = new Uri("https://www.dao.fr")
+            }
+        };
     }
-    public static void AddOpenApiStandardBasic(this IServiceCollection services)
-    {
-        services.AddSwaggerGen(options => {
-            options.SwaggerDoc("v1", new OpenApiInfo
-            {
-                Title = "WeatherAPI",
-                Description = "TODO > Describe",
-                Version = "v1",
-                TermsOfService = new Uri("https://www.google.fr"),
-                Contact = new OpenApiContact
-                {
-                    Name = "Author",
-                    Url = new Uri("https://www.contact@gmail.com"),
-                    Email = "toto@gmail.com"
-                },
-                License = new OpenApiLicense
-                {
-                    Name = "License",
-                    Url = new Uri("https://www.dao.fr")
-                }
-            });
-                
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-        });
+}
 
+public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
+{
+    private readonly IApiVersionDescriptionProvider _provider;
+    private readonly IConfiguration _configuration;
+    public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider, IConfiguration configuration)
+    {
+        _provider = provider;
+        _configuration = configuration;
     }
 
-    public static void AddEntityFramework(this IServiceProvider serviceProvider)
+    /// <summary>
+    /// Configure each API discovered for Swagger Documentation
+    /// </summary>
+    /// <param name="options"></param>
+    public void Configure(SwaggerGenOptions options)
     {
-        // Ensure database is created during application startup
-        using var scope = serviceProvider.CreateScope();
+        foreach (var description in _provider.ApiVersionDescriptions)
+        {
+            options.SwaggerDoc(description.GroupName, CreateVersionInfo(description));
+        }
+    }
+
+    /// <summary>
+    /// Configure Swagger Options. Inherited from the Interface
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="options"></param>
+    public void Configure(string name, SwaggerGenOptions options)
+    {
+        Configure(options);
         
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.EnsureCreated();
-        if (dbContext.Employees.Any()) return;
-        dbContext.Employees.AddRange(TestFixture.BuildEmployees());
-        dbContext.SaveChanges();
+        // Include 'SecurityScheme' to use JWT Authentication
+        var jwtSecurityScheme = new OpenApiSecurityScheme {
+            BearerFormat = "JWT",
+            Name = "JWT Authentication",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
+            Description = "Put **_ONLY_** your JWT Bearer token in the textbox below!",
+            Reference = new OpenApiReference
+            {
+                Id = JwtBearerDefaults.AuthenticationScheme,
+                Type = ReferenceType.SecurityScheme
+            }
+        };
+        var oidcSecurityScheme = new OpenApiSecurityScheme {
+            Type = SecuritySchemeType.OpenIdConnect,
+            Flows = new OpenApiOAuthFlows
+            {
+                Implicit = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri(_configuration["Secrets:AuthorizationUrl"]!),
+                    Scopes = new Dictionary<string, string> { { "openid", "openid" }, { "profile", "profile" } }
+                },
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri(_configuration["Secrets:AuthorizationUrl"]),
+
+                }
+            }
+        };
+
+        //Add Bearer scheme
+        options.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+        //Add OIDC
+        options.AddSecurityDefinition("Keycloak", oidcSecurityScheme);
+        
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement { { oidcSecurityScheme, Array.Empty<string>() } });
+            
+        options.IncludeXmlComments(typeof(WeatherForecastController).Assembly);
     }
-    
-    public static Task ValidateToken(MessageReceivedContext context)
+
+    /// <summary>
+    /// Create information about the version of the API
+    /// </summary>
+    /// <param name="apiDescription"></param>
+    /// <returns>Information about the API</returns>
+    private OpenApiInfo CreateVersionInfo(ApiVersionDescription apiDescription)
     {
-        try
-        {
-            //context.Token = GetToken(context.Request);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            tokenHandler.ValidateToken(context.Token, context.Options.TokenValidationParameters, out var validatedToken);
-
-            var jwtSecurityToken = validatedToken as JwtSecurityToken;
-
-            context.Principal = new ClaimsPrincipal();
-
-            var claimsIdentity = new ClaimsIdentity(jwtSecurityToken!.Claims.ToList(),
-                "JwtBearerToken", ClaimTypes.NameIdentifier, ClaimTypes.Role);
-            context.Principal.AddIdentity(claimsIdentity);
-
-            context.Success();
-
-            return Task.CompletedTask;
-        }
-        catch (Exception e)
-        {
-            context.Fail(e);
-        }
-
-        return Task.CompletedTask;
+        var info = SwaggerBuilderExtension.GetOpenApiInfo(apiDescription);
+        if (apiDescription.IsDeprecated) info.Description += " This API version has been deprecated. Please use one of the new APIs available from the explorer.";
+        return info;
     }
 }
