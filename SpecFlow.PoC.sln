@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.Tests", "SpecFlow.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.Benchmark", "SpecFlow.Benchmark\SpecFlow.Benchmark.csproj", "{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Host", "..\AspireHost\Aspire.Host.csproj", "{63185BEF-28A6-4A88-8E87-4C29B289F4DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Host", "AspireHost\Aspire.Host.csproj", "{63185BEF-28A6-4A88-8E87-4C29B289F4DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
