@@ -216,4 +216,4 @@ https://rmauro.dev/jwt-authentication-with-csharp-dotnet/#set-up-authentication-
 
 # Aspire install
 
-sudo dotnet workload install aspire
+    sudo dotnet workload install aspire
