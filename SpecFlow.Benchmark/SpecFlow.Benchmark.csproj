@@ -12,4 +12,14 @@
       <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SpecFlow.PoC\SpecFlow.PoC.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="test.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

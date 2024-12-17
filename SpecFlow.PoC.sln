@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.PoC.Caching", "Spe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.Tests", "SpecFlow.Tests\SpecFlow.Tests.csproj", "{575CF498-5F64-46BB-9CBF-98F91E9F190F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.Benchmark", "SpecFlow.Benchmark\SpecFlow.Benchmark.csproj", "{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aspire.Host", "..\AspireHost\Aspire.Host.csproj", "{63185BEF-28A6-4A88-8E87-4C29B289F4DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{575CF498-5F64-46BB-9CBF-98F91E9F190F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{575CF498-5F64-46BB-9CBF-98F91E9F190F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{575CF498-5F64-46BB-9CBF-98F91E9F190F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A9763B9-A39E-477F-BEB0-828ACA52E9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63185BEF-28A6-4A88-8E87-4C29B289F4DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63185BEF-28A6-4A88-8E87-4C29B289F4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63185BEF-28A6-4A88-8E87-4C29B289F4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63185BEF-28A6-4A88-8E87-4C29B289F4DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

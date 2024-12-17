@@ -213,3 +213,7 @@ Checking token / policies
 https://rmauro.dev/jwt-authentication-with-csharp-dotnet/#set-up-authentication-and-authorization
 
 # Vault Hashicorp?
+
+# Aspire install
+
+sudo dotnet workload install aspire
