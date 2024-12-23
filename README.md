@@ -1,10 +1,15 @@
 ![example workflow](https://github.com/damienoriamilesi/SpecFlow.PoC/actions/workflows/dotnet.yml/badge.svg)
 
 
-# Add Open API Standard Support
+# Open API Standard Support
 
 <details>
-docker run -p 8585:8080 -it --rm quay.io/microcks/microcks-uber:latest-native 
+<summary>See details</summary>
+<br>
+<p>Microcks to register the API contracts</p>
+<br>
+
+    docker run -p 8585:8080 -it --rm quay.io/microcks/microcks-uber:latest-native 
 
 Microcks - Cron Job interval :  https://microcks.io/documentation/guides/usage/importing-content/
 services.update.interval=${SERVICES_UPDATE_INTERVAL:0 0 0/2 * * *}
@@ -14,27 +19,28 @@ https://crontab.guru/#*_*_*_*_* (Help to format interval)
 Example: https://raw.githubusercontent.com/damienoriamilesi/SpecFlow.PoC/master/SpecFlow.PoC/swagger.json
 
 ## Exec commands inside the container
-docker exec -it d619f95ec002 /bin/bash
+    docker exec -it d619f95ec002 /bin/bash
 
 </details>
+<br>
 
 # Caching
 
-Adding Response caching 
-Just add middleware 
+<details>
+<summary>See details</summary>
 
-    builder.Services.AddResponseCaching(cfg => { });
-
-And just BEFORE MapControllers
-
-    app.UseResponseCaching();
-
-https://code-maze.com/aspnetcore-response-caching/
+See OutputCaching / HybridCaching in NET9
+https://www.milanjovanovic.tech/blog/hybrid-cache-in-aspnetcore-new-caching-library
 
 
-# Add EF Core support (for SQLite)
+</details>
+<br>
+
+# EF Core support (for SQLite)
 
 <details>
+<summary>See details</summary>
+
 Add the packages
 
     Microsoft.EntityFrameworkCore 
@@ -56,12 +62,12 @@ Finally, add the following to seed the Db if needed
     }
 
 </details>
+<br>
 
-# Add Metrics with Prometheus / Grafana
+#  Metrics with Prometheus / Grafana
 
 
 <details>
-
 <summary>See details</summary>
 
 ## <b>Install Prometheus and Grafana as a Docker container
@@ -114,13 +120,13 @@ Vous pouvez uniquement l'ajouter à la session active en exécutant la commande 
 
 ### Customize prometheus.yml
 
-
-
 </details>
-
-<br><br>
+<br>
 
 # HealthChecks
+
+<details>
+<summary>See details</summary>
 
 Add healthchecks middleware (Microsoft.Extensions.Diagnostics.HealthChecks)
 just after AddControllers instruction.
@@ -136,10 +142,15 @@ Add the following to check if Db is up and running
 Customizing the response
 > https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-8.0#customize-output
 
-<br>
+</details>
 <br>
 
 # BDD - SpecFlow
+
+<details>
+<summary>See details</summary>
+
+
 ## Hooks
 
 Actions to perform before and/or after each feature, Scenario or Step
@@ -157,7 +168,13 @@ TODO
 
 ./livingdoc test-assembly xxx/SpecFlow.PoC.BDD.Tests.dll -t xxx/TestExecution.json -o xxx/LivingDoc/PoC.BDD.Report.html
 
+</details>
+<br>
+
 # KeyCloak
+
+<details>
+<summary>See details</summary>
 
     docker run -p 8080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak start-dev
 
@@ -217,6 +234,9 @@ And this chunk
 Checking token / policies
 
 https://rmauro.dev/jwt-authentication-with-csharp-dotnet/#set-up-authentication-and-authorization
+
+</details>
+<br>
 
 # Vault Hashicorp?
 
