@@ -13,11 +13,11 @@ public class BenchmarkToExecute
     [Benchmark()]
     public void CheckReadAllText()
     {
-        File.ReadAllText("test.json");
+        var test = Task.Run(() => "toto").Result;
     }
     [Benchmark()]
     public void CheckReadAllText2()
     {
-        File.ReadAllLines("test.json");
+        var test = "toto";
     }
 }

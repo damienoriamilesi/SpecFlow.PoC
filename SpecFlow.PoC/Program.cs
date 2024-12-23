@@ -9,8 +9,10 @@ using Prometheus;
 using SpecFlow.PoC.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
 using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
+using SpecFlow.PoC.Meters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +76,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.
 
 //TODO > Implement
 builder.Services.AddResponseCaching();
+
+builder.Services.RegisterOpenTelemetry();
 
 builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
 var app = builder.Build();

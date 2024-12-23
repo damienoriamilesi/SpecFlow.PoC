@@ -1,17 +1,72 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "SpecFlow.PoC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
-    "version": "1.0"
+    "title": "WeatherAPI",
+    "description": "TODO > Describe",
+    "termsOfService": "https://www.google.fr",
+    "contact": {
+      "name": "Author",
+      "url": "https://www.contact@gmail.com",
+      "email": "toto@gmail.com"
+    },
+    "license": {
+      "name": "License",
+      "url": "https://www.dao.fr"
+    },
+    "version": "v1API"
   },
   "paths": {
-    "/api/WeatherForecasts": {
+    "/api/v1/Weathers": {
+      "get": {
+        "tags": [
+          "Weather"
+        ],
+        "summary": "JUST DO IT",
+        "operationId": "{apiVersion:Version}/Weather",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/WeatherForecasts": {
       "get": {
         "tags": [
           "WeatherForecast"
         ],
         "summary": "JUST DO IT",
-        "operationId": "GetWeatherForecast",
+        "operationId": "{apiVersion:Version}/GetWeatherForecast",
         "responses": {
           "200": {
             "description": "OK",
@@ -101,7 +156,7 @@
         }
       }
     },
-    "/api/WeatherForecasts/{id}": {
+    "/api/v1/WeatherForecasts/{id}": {
       "get": {
         "tags": [
           "WeatherForecast"
@@ -156,7 +211,7 @@
         }
       }
     },
-    "/test42/{toto}": {
+    "/api/v1/WeatherForecasts/test42/{toto}": {
       "get": {
         "tags": [
           "WeatherForecast"
@@ -179,7 +234,7 @@
         }
       }
     },
-    "/test666/{toto}": {
+    "/api/v1/WeatherForecasts/test666/{toto}": {
       "get": {
         "tags": [
           "WeatherForecast"
@@ -321,15 +376,19 @@
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "Put **_ONLY_** your JWT Bearer token on textbox below!",
+        "description": "Put **_ONLY_** your JWT Bearer token in the textbox below!",
         "scheme": "Bearer",
         "bearerFormat": "JWT"
+      },
+      "Keycloak": {
+        "type": "openIdConnect"
       }
     }
   },
   "security": [
     {
       "Bearer": [ ]
-    }
+    },
+    { }
   ]
 }

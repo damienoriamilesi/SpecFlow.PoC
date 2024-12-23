@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mime;
-using System.Threading.Tasks;
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
+using SpecFlow.PoC.Meters;
 using Swashbuckle.AspNetCore.Filters;
 #pragma warning disable CS1591
 
@@ -33,8 +27,9 @@ public class WeatherForecastController : ControllerBase
     };
 
     private readonly ILogger<WeatherForecastController> _logger;
-    private readonly IMediator _mediator;
     private readonly ApplicationDbContext _context;
+    private readonly IMediator _mediator;
+    private readonly EntryMeter _meter;
     private readonly IDataProtector _dataProtector;
 
     /// <summary>
@@ -44,12 +39,16 @@ public class WeatherForecastController : ControllerBase
     /// <param name="mediator"></param>
     /// <param name="dataProtectionProvider"></param>
     /// <param name="context"></param>
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IMediator mediator, 
-                                    IDataProtectionProvider dataProtectionProvider, ApplicationDbContext context)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, 
+                                    IMediator mediator, 
+                                    IDataProtectionProvider dataProtectionProvider, 
+                                    ApplicationDbContext context,
+                                    EntryMeter meter)
     {
         _logger = logger;
         _mediator = mediator;
         _context = context;
+        _meter = meter;
         _dataProtector = dataProtectionProvider.CreateProtector("WeatherAPI");
     }
 
@@ -71,7 +70,9 @@ public class WeatherForecastController : ControllerBase
             Summary =  _dataProtector.Protect(Summaries[Random.Shared.Next(Summaries.Length)])
         })
         .ToArray();
-
+        
+        _meter.ReadsCounter.Add(1);
+        
         return result;
     }
     

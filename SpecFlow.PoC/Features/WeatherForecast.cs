@@ -28,5 +28,11 @@ public class WeatherForecast
     /// </summary>
     /// <example>Should be sunny tomorrow</example>
     public string Summary { get; set; }
+
+    /// <summary>
+    /// Employee item
+    /// </summary>
+    /// <example>John Doe</example>
+    public Employee Employee { get; set; }
 }
 
