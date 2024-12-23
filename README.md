@@ -3,6 +3,7 @@
 
 # Add Open API Standard Support
 
+<details>
 docker run -p 8585:8080 -it --rm quay.io/microcks/microcks-uber:latest-native 
 
 Microcks - Cron Job interval :  https://microcks.io/documentation/guides/usage/importing-content/
@@ -14,6 +15,8 @@ Example: https://raw.githubusercontent.com/damienoriamilesi/SpecFlow.PoC/master/
 
 ## Exec commands inside the container
 docker exec -it d619f95ec002 /bin/bash
+
+</details>
 
 # Caching
 
@@ -31,6 +34,7 @@ https://code-maze.com/aspnetcore-response-caching/
 
 # Add EF Core support (for SQLite)
 
+<details>
 Add the packages
 
     Microsoft.EntityFrameworkCore 
@@ -50,6 +54,8 @@ Finally, add the following to seed the Db if needed
         dbContext.Employees.AddRange(TestFixture.BuildEmployees());
         dbContext.SaveChanges();
     }
+
+</details>
 
 # Add Metrics with Prometheus / Grafana
 
