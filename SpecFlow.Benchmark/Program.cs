@@ -8,7 +8,7 @@ var result = BenchmarkRunner.Run<BenchmarkToExecute>();
 [MemoryDiagnoser]
 public class BenchmarkToExecute
 {
-    private string fileContent;
+    //private string? fileContent;
 
     [Benchmark()]
     public void CheckReadAllText()
@@ -18,6 +18,6 @@ public class BenchmarkToExecute
     [Benchmark()]
     public void CheckReadAllText2()
     {
-        var test = "toto";
+        //var test = "toto";
     }
 }

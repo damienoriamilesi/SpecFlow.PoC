@@ -8,3 +8,5 @@
     <Message Text="generating openapi" Importance="high" />
     <Exec Command="dotnet tool run swagger tofile --yaml --output openapi.yaml $(OutputPath)$(AssemblyName).dll v1" />
   </Target>
+  
+  <Exec Command="dotnet swagger tofile --output '$(OutputPath)swagger_v1.json' '$(OutputPath)$(AssemblyName).dll' v1" WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" />

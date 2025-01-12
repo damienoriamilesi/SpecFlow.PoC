@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Reflection;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using SpecFlow.PoC.Controllers;
@@ -14,15 +7,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 #pragma warning disable CS1591
 
-namespace SpecFlow.PoC;
+namespace SpecFlow.PoC.Extensions;
 
 public static class SwaggerBuilderExtension
 {
-    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services)
-    {
-        services.AddSwaggerGen();
-    }
-
+    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services) => services.AddSwaggerGen();
     public static OpenApiInfo GetOpenApiInfo(ApiVersionDescription apiVersionDescription)
     {
         return new OpenApiInfo

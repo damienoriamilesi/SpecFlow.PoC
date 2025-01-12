@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -37,6 +37,5 @@
     </Exec>
     <Error Condition="'$(SwaggerExitCode)' != '1'" Text="Swagger not installed in local dotnet tool ! Launch dotnet new tool-manifest + dotnet tool install -v 6.4.0 Swashbuckle.AspNetCore.Cli">
     </Error>-->
-    <Exec Command="dotnet swagger tofile --output '$(OutputPath)swagger_v1.json' '$(OutputPath)$(AssemblyName).dll' v1" WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" />
   </Target>
 </Project>

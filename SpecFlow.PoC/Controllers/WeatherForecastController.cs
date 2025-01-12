@@ -39,6 +39,7 @@ public class WeatherForecastController : ControllerBase
     /// <param name="mediator"></param>
     /// <param name="dataProtectionProvider"></param>
     /// <param name="context"></param>
+    /// <param name="meter"></param>
     public WeatherForecastController(ILogger<WeatherForecastController> logger, 
                                     IMediator mediator, 
                                     IDataProtectionProvider dataProtectionProvider, 

@@ -1,17 +1,27 @@
-using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using HealthChecks.Sqlite;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using SpecFlow.PoC.Features;
 
-namespace SpecFlow.PoC;
+namespace SpecFlow.PoC.Extensions;
 
 /// <summary>
 /// Healthcheck methods
 /// </summary>
-public class HealthCheckExtension
+public static class HealthCheckExtension
 {
+    /// <summary>
+    /// Registering Healthchecks
+    /// </summary>
+    /// <param name="services"></param>
+    public static void AddHealthchecks(this IServiceCollection services)
+    {
+        var connectionString = "Data Source=SQLiteSample.db";
+        services.AddHealthChecks()
+            .AddCheck("SQLite Db", new SqliteHealthCheck(connectionString, $"SELECT 1 FROM {nameof(Employee)}s"));
+    }
+
     /// <summary>
     /// Get Healthcheck custom status
     /// </summary>
