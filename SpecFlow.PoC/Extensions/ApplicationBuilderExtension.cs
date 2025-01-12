@@ -11,7 +11,12 @@ namespace SpecFlow.PoC.Extensions;
 
 public static class SwaggerBuilderExtension
 {
-    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services) => services.AddSwaggerGen();
+    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services)
+    {
+        services.AddApiAuthentication();
+        services.AddSwaggerGen();
+    }
+
     public static OpenApiInfo GetOpenApiInfo(ApiVersionDescription apiVersionDescription)
     {
         return new OpenApiInfo

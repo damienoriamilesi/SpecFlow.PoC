@@ -1,12 +1,9 @@
 ﻿using System.Net.Mime;
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Prometheus;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using SpecFlow.PoC;
 using SpecFlow.PoC.Controllers;
 using SpecFlow.PoC.Extensions;
@@ -85,28 +82,15 @@ app.UseHttpMetrics(options=> {
     //options.AddCustomLabel("http", context => context.Request.HttpContext.);
 });
 
-//app.UseAuthentication();
-//app.UseAuthorization();
-/*
-app.Use(_ => { var tokenHandler = new JwtSecurityTokenHandler();
-    try
-    {
-        tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-        return validatedToken != null;
-    }
-    catch (Exception)
-    {
-        return false;
-    } });
-    
-*/
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseResponseCaching();
 
 app.UseEndpoints(endpoint =>
 {
     endpoint.MapMetrics();
-    endpoint.MapControllers();//.RequireAuthorization();
+    endpoint.MapControllers().RequireAuthorization();
     endpoint.MapHealthChecks("health", new HealthCheckOptions
     {
         ResponseWriter = HealthCheckExtension.WriteResponse
