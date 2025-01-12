@@ -8,6 +8,8 @@ using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
 using SpecFlow.PoC.Meters;
 using Swashbuckle.AspNetCore.Filters;
+using HttpMethod = Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http.HttpMethod;
+
 #pragma warning disable CS1591
 
 namespace SpecFlow.PoC.Controllers;
@@ -30,6 +32,8 @@ public class WeatherForecastController : ControllerBase
     private readonly ApplicationDbContext _context;
     private readonly IMediator _mediator;
     private readonly EntryMeter _meter;
+    private readonly LinkGenerator _linkGenerator;
+    private readonly IHttpContextAccessor _httpContext;
     private readonly IDataProtector _dataProtector;
 
     /// <summary>
@@ -40,16 +44,22 @@ public class WeatherForecastController : ControllerBase
     /// <param name="dataProtectionProvider"></param>
     /// <param name="context"></param>
     /// <param name="meter"></param>
+    /// <param name="linkGenerator">Helps create HATEOAS links</param>
+    /// <param name="httpContext">To generate HATEOAS links, we need HttpContext</param>
     public WeatherForecastController(ILogger<WeatherForecastController> logger, 
                                     IMediator mediator, 
                                     IDataProtectionProvider dataProtectionProvider, 
                                     ApplicationDbContext context,
-                                    EntryMeter meter)
+                                    EntryMeter meter,
+                                    LinkGenerator linkGenerator,
+                                    IHttpContextAccessor httpContext)
     {
         _logger = logger;
         _mediator = mediator;
         _context = context;
         _meter = meter;
+        _linkGenerator = linkGenerator;
+        _httpContext = httpContext;
         _dataProtector = dataProtectionProvider.CreateProtector("WeatherAPI");
     }
 
@@ -83,10 +93,10 @@ public class WeatherForecastController : ControllerBase
     /// <example>42</example>
     /// <returns></returns>
     [HttpGet("{id:int}" ,Name = "GetWeatherForecastWithParam")]
-    [ProducesResponseType(typeof(string[]),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetForecastByIdResponse),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<WeatherForecast> GetById(int id)
+    public ActionResult<GetForecastByIdResponse> GetById(int id)
     {
         var result = Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
@@ -96,7 +106,12 @@ public class WeatherForecastController : ControllerBase
         })
         .First();
 
-        return Ok(result);
+        var response = new GetForecastByIdResponse(result, new List<Link>());
+        response.Links.Add(
+            new(_linkGenerator.GetUriByAction(_httpContext.HttpContext!, nameof(GetById), values: new { id }),
+                nameof(GetById), HttpMethod.Get.ToString()));
+        
+        return Ok(response);
     }
 
     /// <summary>
@@ -129,18 +144,6 @@ public class WeatherForecastController : ControllerBase
     {
         return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
     }
-    
-    [HttpGet("test42/{toto}",Name = "GetById42")]
-    public IActionResult GetById42(string toto)
-    {
-        return Ok(42);
-    }
-    
-    [HttpGet("test666/{toto}",Name = "GetById666")]
-    public IActionResult GetById666(string toto)
-    {
-        return Ok(666);
-    }
 }
 
 public record CreateWeatherForecastRequest(Forecast[] Forecasts);
@@ -169,3 +172,7 @@ public class CreateWeatherForecastRequestExample : IExamplesProvider<CreateWeath
         return new CreateWeatherForecastRequest(new []{new Forecast("Sunny", 42)});
     }
 }
+
+public record GetForecastByIdResponse(WeatherForecast WeatherForecast, List<Link> Links);
+
+public record Link(string Href, string Rel, string Method);

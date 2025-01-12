@@ -52,6 +52,8 @@ builder.Services.RegisterOpenTelemetry();
 
 builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
