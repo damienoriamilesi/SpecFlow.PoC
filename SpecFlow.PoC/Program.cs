@@ -10,7 +10,7 @@ using SpecFlow.PoC.Extensions;
 using SpecFlow.PoC.Meters;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddServiceDefaults();
 builder.Services.AddDataProtection();
 
 builder.Services.AddDatabase();
