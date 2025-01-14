@@ -243,3 +243,27 @@ https://rmauro.dev/jwt-authentication-with-csharp-dotnet/#set-up-authentication-
 # Aspire install
 
     sudo dotnet workload install aspire
+
+First, we gotta add Project to the builder.
+Minimal instruction to build:
+    using Projects;
+
+    var builder = DistributedApplication.CreateBuilder(args);
+    builder.AddProject<SpecFlow_PoC>("api");
+
+    builder.Build().Run();
+
+NB: 
+Possible Error => 
+https://github.com/dotnet/aspire/issues/6851
+
+    fail: Aspire.Hosting.Dcp.dcpctrl.NetworkReconciler[0]
+    could not create the network as all available subnet ranges
+    from the default pool are allocated, retrying...
+    {
+        "NetworkName": {"name":"default-aspire-network"}, 
+        "Reconciliation": 16, 
+        "Network": "default-aspire-network-o428ocs3sd", 
+        "error": "object could not allocate required resources/nnetwork subnet pool full"
+    }
+SOLUTION => docker network prune

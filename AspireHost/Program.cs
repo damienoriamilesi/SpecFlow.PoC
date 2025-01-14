@@ -1,10 +1,10 @@
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-var cache = 
-    builder.AddRedis("cache").WithRedisCommander();
+var cache = builder.AddRedis("cache").WithRedisCommander();
+
 builder.AddProject<SpecFlow_PoC>("api")
-    .WithReference(cache);
+        .WithReference(cache);
 
 builder.Build().Run();
 
