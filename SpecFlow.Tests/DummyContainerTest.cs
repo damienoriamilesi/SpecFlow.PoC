@@ -32,5 +32,5 @@ public abstract class ContainerTestBase : IAsyncLifetime
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.DisposeAsync();
+    public async Task DisposeAsync() => await _container.StopAsync();
 }
