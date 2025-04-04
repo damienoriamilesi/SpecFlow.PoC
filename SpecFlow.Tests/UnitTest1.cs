@@ -1,6 +1,9 @@
+using System.ComponentModel;
+using Testcontainers.PostgreSql;
+
 namespace SpecFlow.Tests;
 
-public class UnitTest1
+public class DummyContainerTest : ContainerTestBase
 {
     [Fact]
     public void Test1()
@@ -17,3 +20,17 @@ public class UnitTest1
     }
 }
 
+/// <summary>
+/// Init TestContainer with Postgre container
+/// </summary>
+public abstract class ContainerTestBase : IAsyncLifetime
+{
+    private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
+        .WithImage("postgres:16")
+        .WithReuse(false)
+        .Build();
+
+    public async Task InitializeAsync() => await _container.StartAsync();
+
+    public async Task DisposeAsync() => await _container.DisposeAsync();
+}
