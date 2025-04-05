@@ -2,6 +2,9 @@ using System.Diagnostics.Metrics;
 
 namespace SpecFlow.PoC.Meters;
 
+/// <summary>
+/// 
+/// </summary>
 public class EntryMeter
 {
     public Meter Meter { get; private set; }
