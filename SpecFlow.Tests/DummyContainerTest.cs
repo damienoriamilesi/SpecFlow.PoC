@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Testcontainers.PostgreSql;
 
 namespace SpecFlow.Tests;
@@ -27,10 +26,16 @@ public abstract class ContainerTestBase : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container = new PostgreSqlBuilder()
         .WithImage("postgres:16")
-        .WithReuse(false)
+        //.WithReuse(false)
         .Build();
 
-    public async Task InitializeAsync() => await _container.StartAsync();
+    public async Task InitializeAsync()
+    {
+        await _container.StartAsync();
+        var cnxString = _container.GetConnectionString();
+        //Host=127.0.0.1;Port=54566;Database=postgres;Username=postgres;Password=postgres
+        
+    }
 
     public async Task DisposeAsync() => await _container.StopAsync();
 }
