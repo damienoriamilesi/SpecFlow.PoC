@@ -75,7 +75,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
     
-    //dbContext.Database.Migrate();
+    dbContext.Database.Migrate();
 
     if (!dbContext.Employees.Any())
     {

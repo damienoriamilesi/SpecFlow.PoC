@@ -30,10 +30,13 @@ public class WeatherForecast : Entity
     /// <example>Should be sunny tomorrow</example>
     public string Summary { get; set; }
 
+    public bool HasBeenBroadcast { get; set; }
+    
+    public string Description { get; set; }
+
     /// <summary>
     /// Employee item
     /// </summary>
     /// <example>John Doe</example>
     public Employee Employee { get; set; }
 }
-
