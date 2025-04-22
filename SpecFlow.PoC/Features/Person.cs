@@ -6,10 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SpecFlow.PoC.Features;
 
 #pragma warning disable CS1591
-public abstract class Person
+public abstract class Person : Entity
 {
-    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]       
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public DateTime BirthdayDate { get; set; }
 }
@@ -21,6 +19,6 @@ public class Employee : Person
 
 public abstract class Entity
 {
-    /*[Key()]
-    public Guid Id { get; set; }*/
+    [Key]
+    public Guid Id { get; set; }
 }

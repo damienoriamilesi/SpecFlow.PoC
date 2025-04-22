@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Data.Sqlite;
 using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Features.UpdateWeather;
 using SpecFlow.PoC.Meters;
@@ -35,7 +36,7 @@ public class WeatherForecastController : ControllerBase
     private readonly LinkGenerator _linkGenerator;
     private readonly IHttpContextAccessor _httpContext;
     private readonly IDataProtector _dataProtector;
-
+   
     /// <summary>
     /// WeatherForecastController
     /// </summary>
@@ -61,6 +62,7 @@ public class WeatherForecastController : ControllerBase
         _linkGenerator = linkGenerator;
         _httpContext = httpContext;
         _dataProtector = dataProtectionProvider.CreateProtector("WeatherAPI");
+        
     }
 
     /// <summary>
@@ -140,9 +142,13 @@ public class WeatherForecastController : ControllerBase
     /// <returns></returns>
     [SwaggerRequestExample(typeof(CreateWeatherForecastRequest),typeof(CreateWeatherForecastRequestExample))]
     [HttpPost]
-    public IActionResult Create([FromBody] CreateWeatherForecastRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateWeatherForecastRequest request)
     {
-        return CreatedAtAction(nameof(Get), request, Guid.NewGuid());
+        var id = Guid.NewGuid();
+        _context.Employees.Add(new Employee { Name = $"test_{id}"});
+        var resultCode = await _context.SaveChangesAsync();
+        
+        return CreatedAtAction(nameof(Get), request, id);
     }
 }
 
@@ -161,7 +167,7 @@ public class DataProtectionActionFilter : IActionFilter
     {
         // Do something after the action executes.
         // For each property decorated with DataProtection
-        var instanceFromResponse = context.Result!.GetType().GetProperties();
+        //var instanceFromResponse = context.Result!.GetType().GetProperties();
     }
 }
 

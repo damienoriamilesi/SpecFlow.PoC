@@ -9,6 +9,7 @@ var db = postgres.AddDatabase("Db");// Internal API
 // Add docker run -p 9090:9090 prom/prometheus
 
 // Add Keycloak
+//var keycloak = builder.AddKeycloak("keycloak", 8080);
 
 //...
 

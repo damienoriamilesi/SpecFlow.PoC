@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using SpecFlow.PoC.Features;
 #pragma warning disable CS1591
@@ -10,10 +8,31 @@ namespace SpecFlow.PoC;
 public class ApplicationDbContext : DbContext
 {
     /// <inheritdoc />
-    public ApplicationDbContext(DbContextOptions options) : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
-    public virtual DbSet<Employee> Employees { get; set; }
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Employee>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name); //.HasColumnType("VARCHAR");
+            entity.Property(e => e.BirthdayDate); //.HasColumnType("DOUBLE");
+        });
+
+        modelBuilder.Entity<WeatherForecast>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Date);
+            entity.Property(e => e.TemperatureC);
+            //entity.Property(e => e.TemperatureF);
+            entity.HasOne(e => e.Employee);
+        });
+    }
+
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<WeatherForecast> WeatherForecasts { get; set; }
 }
 
 internal static class TestFixture

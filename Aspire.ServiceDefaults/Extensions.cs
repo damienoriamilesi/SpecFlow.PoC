@@ -116,3 +116,22 @@ public static class Extensions
         return app;
     }
 }
+
+public class ExampleHealthCheck : IHealthCheck
+{
+    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    {
+        // Check health here
+
+        if(context.Registration.Tags.Contains("live"))
+        {
+            return Task.FromResult(
+                HealthCheckResult.Healthy("The check succeeded.")  
+            );
+        }
+
+        return Task.FromResult(
+            HealthCheckResult.Unhealthy("The check failed.")
+        ); 
+    }
+}

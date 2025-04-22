@@ -10,8 +10,8 @@ public class UpdateWeatherForecastCommand : IRequest<int>
 {
     public WeatherForecast WeatherForecast { get; set; }
 }
-public record WeatherUpdatedNotification(WeatherForecast WeatherForecast) : INotification;
 
+public record WeatherUpdatedNotification(WeatherForecast WeatherForecast) : INotification;
 
 public class WeatherUpdatedNotificationHandler : INotificationHandler<WeatherUpdatedNotification>
 {

@@ -1,72 +1,102 @@
-﻿using System.Net.Mime;
-using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.EntityFrameworkCore;
 using Prometheus;
 using SpecFlow.PoC;
-using SpecFlow.PoC.Controllers;
 using SpecFlow.PoC.Extensions;
+using SpecFlow.PoC.Extensions.OpenApiSpec;
+using SpecFlow.PoC.Features;
 using SpecFlow.PoC.Meters;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Aspire services
 builder.AddServiceDefaults();
-builder.Services.AddDataProtection();
+
+#region Add services to the IoC Container
+
+// Add Problem Details support
+builder.Services.AddProblemDetails();
+builder.Services.ConfigureOptions<ConfigureProblemDetailsOptions>();
+
+builder.Services.AddControllers();
+builder.Services.ConfigureOptions<ConfigureControllersOptions>();
+
+builder.Services.AddApiVersioning().AddMvc().AddApiExplorer(options => { options.GroupNameFormat = "'v'V"; options.SubstituteApiVersionInUrl = true; });
+builder.Services.ConfigureOptions<ConfigureVersioningOptions>();
+
+builder.Services.AddApiAuthentication();
 
 builder.Services.AddDatabase();
 
-builder.Services.AddOpenApiDocumentationSecurity();
-
-builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
-
-// Add services to the container.
-builder.Services.AddControllers(options => {
-    options.Filters.Add(new ProducesAttribute(MediaTypeNames.Application.Json));
-    options.Filters.Add(new ConsumesAttribute(MediaTypeNames.Application.Json));
-    options.Filters.Add<DataProtectionActionFilter>();
-    //options.ReturnHttpNotAcceptable = true; // Required for Content Negotiation 
-});
-builder.Services.AddApiVersioning(options => {
-    options.DefaultApiVersion = new ApiVersion(1);
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ApiVersionReader = new UrlSegmentApiVersionReader();
-}).AddMvc()
-    .AddApiExplorer(options => {
-    options.GroupNameFormat = "'v'V";
-    options.SubstituteApiVersionInUrl = true;
-});
-
 builder.Services.AddHealthchecks();
+builder.Services.AddDataProtection();
+
+
+builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 
 //TODO > Implement
-//builder.Services.AddRedis()
+//builder.Services.AddRedis();
 builder.Services.AddResponseCaching();
-
 builder.Services.RegisterOpenTelemetry();
-
 builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
-
 builder.Services.AddHttpContextAccessor();
 
+#endregion
+
+#region Configure HTTP Request Pipeline
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//      MIDDLEWARES ORDER
+//////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * ExceptionHandler
+ * HSTS
+ * HttpsRedirection
+ * StaticFiles
+ * Routing
+ * CORS
+ * Authentication
+ * Authorization
+ *
+ *
+ * 
+ * CUSTOM ONES
+ *
+ *
+ * ENDPOINTS
+ */
+//////////////////////////////////////////////////////////////////////////////////////////
 var app = builder.Build();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Ensure database is created during application startup
+using (var scope = app.Services.CreateScope())
 {
-    //app.UseHsts();
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+    
+    //dbContext.Database.Migrate();
+
+    if (!dbContext.Employees.Any())
     {
-        var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-        foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions)
-        {
-            options.SwaggerEndpoint($"{description.GroupName}/swagger.json", $"{description.GroupName.ToUpperInvariant()} - test");
-        }
-    });
+        dbContext.Employees.AddRange(TestFixture.BuildEmployees());
+        dbContext.SaveChanges();
+    }
+    
+    if (!dbContext.WeatherForecasts.Any())
+    {
+        dbContext.WeatherForecasts.Add(new WeatherForecast { Date = DateTime.Now, TemperatureC = 10, Summary = "Freezing" });
+        dbContext.SaveChanges();
+    }
 }
-//app.UseHttpsRedirection();
+
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+    app.UseHsts();
+    app.UseOpenApiSpecVersioning();
+//}
+app.UseHttpsRedirection();
 app.UseRouting();
 
 //adding metrics related to HTTP
@@ -87,14 +117,12 @@ app.UseAuthorization();
 
 app.UseResponseCaching();
 
-app.UseEndpoints(endpoint =>
-{
-    endpoint.MapMetrics();
-    endpoint.MapControllers().RequireAuthorization();
-    endpoint.MapHealthChecks("health", new HealthCheckOptions
-    {
-        ResponseWriter = HealthCheckExtension.WriteResponse
-    });
-});
+app.MapMetrics();
+app.MapControllers().RequireAuthorization();
+
+
+app.MapDefaultEndpoints();
+
+#endregion
 
 app.Run();

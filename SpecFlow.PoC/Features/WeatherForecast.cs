@@ -1,10 +1,13 @@
-﻿#pragma warning disable CS1591
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+#pragma warning disable CS1591
 namespace SpecFlow.PoC.Features;
 
-public class WeatherForecast
+public class WeatherForecast : Entity
 {
     /// <summary>
-    /// 
+    /// Date of the current forecast
     /// </summary>
     /// <example>2024-01-01</example>
     public DateTime Date { get; set; }

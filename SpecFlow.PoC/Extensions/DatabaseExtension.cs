@@ -13,9 +13,17 @@ public static class DatabaseExtension
     /// <param name="services"></param>
     public static void AddDatabase(this IServiceCollection services)
     {
-        services.AddEntityFrameworkSqlite().AddDbContext<ApplicationDbContext>(options =>
+        /*var folder = Environment.SpecialFolder.LocalApplicationData;
+        var path = Environment.GetFolderPath(folder);
+        var DbPath = Path.Join(path, "SQLiteSample.db");
+        
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+           //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+           options.UseSqlite("Data Source=SampleApi.db"));
+*/
+        services.AddDbContext<ApplicationDbContext>(options =>
             //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-            options.UseSqlite("Filename=SQLiteSample.db")
+            options.UseSqlite("Data Source=SQLiteSample.db")
         );
     }
 }

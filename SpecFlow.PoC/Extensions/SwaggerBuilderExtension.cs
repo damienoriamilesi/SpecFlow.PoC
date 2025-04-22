@@ -7,19 +7,13 @@ namespace SpecFlow.PoC.Extensions;
 
 public static class SwaggerBuilderExtension
 {
-    public static void AddOpenApiDocumentationSecurity(this IServiceCollection services)
-    {
-        services.AddApiAuthentication();
-        services.AddSwaggerGen();
-    }
-
-    public static OpenApiInfo GetOpenApiInfo(ApiVersionDescription apiVersionDescription)
+    public static OpenApiInfo GetOpenApiInfo(this ApiVersionDescription apiVersionDescription)
     {
         return new OpenApiInfo
         {
             Title = "WeatherAPI",
             Description = "TODO > Describe",
-            Version = apiVersionDescription.GroupName + "API",
+            Version = apiVersionDescription.GroupName + "_API",
             TermsOfService = new Uri("https://www.google.fr"),
             Contact = new OpenApiContact
             {
