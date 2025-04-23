@@ -17,9 +17,9 @@ public static class HealthCheckExtension
     /// <param name="services"></param>
     public static void AddHealthchecks(this IServiceCollection services)
     {
-        var connectionString = "Data Source=SQLiteSample.db";
         services.AddHealthChecks()
-            .AddCheck("SQLite Db", new SqliteHealthCheck(connectionString, $"SELECT 1 FROM {nameof(Employee)}s"));
+            .AddCheck("SQLite Db", new SqliteHealthCheck(new SqliteHealthCheckOptions { ConnectionString = DatabaseExtension.ConnectionString, CommandText = $"SELECT 1 FROM {nameof(Employee)}s"}));
+               
     }
 
     /// <summary>

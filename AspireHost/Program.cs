@@ -1,10 +1,11 @@
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
+
 var cache = builder.AddRedis("cache").WithRedisCommander();
 
-var postgres = builder.AddPostgres("postgres").PublishAsConnectionString();
-var db = postgres.AddDatabase("Db");// Internal API
+var postgres = builder.AddPostgres("mydb-postgres").WithPgAdmin().PublishAsConnectionString();
+//var db = postgres.AddDatabase("Db");// Internal API
 
 // Add docker run -p 9090:9090 prom/prometheus
 
@@ -13,8 +14,9 @@ var db = postgres.AddDatabase("Db");// Internal API
 
 //...
 
-builder.AddProject<SpecFlow_PoC>("api")
-        .WithReference(cache);
+builder.AddProject<SpecFlow_PoC>("weatherforecast")
+    .WithReference(cache);
+
 
 builder.Build().Run();
 

@@ -8,6 +8,11 @@ namespace SpecFlow.PoC.Extensions;
 public static class DatabaseExtension
 {
     /// <summary>
+    /// Connection string to put in settings / Vault
+    /// </summary>
+    public static string ConnectionString => "Data Source=SQLiteSample.db";
+    
+    /// <summary>
     /// Add SQLite component
     /// </summary>
     /// <param name="services"></param>
@@ -23,7 +28,7 @@ public static class DatabaseExtension
 */
         services.AddDbContext<ApplicationDbContext>(options =>
             //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-            options.UseSqlite("Data Source=SQLiteSample.db")
+            options.UseSqlite(ConnectionString)
         );
     }
 }
