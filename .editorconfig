@@ -1,0 +1,40 @@
+root = true
+
+# Configuration pour tous les fichiers
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# C# files only
+[*.cs]
+# Use "this." for class members
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = true
+
+# Naming conventions
+dotnet_naming_rule_cs = use_camel_case_for_local_variables:suggestion
+dotnet_naming_symbols_cs = private_fields.local_variables
+dotnet_naming_style_cs = camel_case_style
+dotnet_naming_rule_cs.use_camel_case_for_local_variables.severity = suggestion
+dotnet_naming_rule_cs.use_camel_case_for_local_variables.symbols = private_fields.local_variables
+dotnet_naming_rule_cs.use_camel_case_for_local_variables.style = camel_case_style
+
+# Format rules
+csharp_new_line_before_open_brace = all
+csharp_indent_switch_labels = true
+csharp_indent_case_contents = true
+csharp_indent_block_contents = true
+csharp_space_after_cast = true
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_empty_method_call_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false

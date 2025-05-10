@@ -1,4 +1,5 @@
-﻿using Asp.Versioning;
+﻿using System.ComponentModel.DataAnnotations;
+using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ public class WeatherController : ControllerBase
     /// JUST DO IT
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "{apiVersion:Version}/Weather")]
+    [HttpGet( "", Name = "GetWeather" )]
     [ProducesResponseType(typeof(WeatherForecast[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -46,6 +47,31 @@ public class WeatherController : ControllerBase
         var result = await _mediator.Send(new GetWeather.Request(42));
         return result;
     }
+    
+    /// <summary>
+    /// JUST DO IT
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("search", Name = "GetWeatherByFilter")]
+    [ProducesResponseType(typeof(WeatherForecast[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [MapToApiVersion(1)]
+    public async Task<WeatherForecast[]> Get([FromQuery] GetWeatherRequest request)
+    {
+        var result = await _mediator.Send(new GetWeather.Request(42));
+        return result;
+    }
+}
+
+public class GetWeatherRequest
+{
+    [Required]
+    public string Label { get; set; }
+
+    [Required]
+    [Range(1, 8)]
+    public int Code { get; set; }
 }
 
 public static class GetWeather

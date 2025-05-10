@@ -4,8 +4,12 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var cache = builder.AddRedis("cache").WithRedisCommander();
 
-var postgres = builder.AddPostgres("mydb-postgres").WithPgAdmin().PublishAsConnectionString();
-//var db = postgres.AddDatabase("Db");// Internal API
+var postgres =
+    builder.AddPostgres("my-postgres-db")
+        .WithPgAdmin()
+        .WithDataVolume()
+        .PublishAsConnectionString();
+var db = postgres.AddDatabase("weather-db");// Internal API
 
 // Add docker run -p 9090:9090 prom/prometheus
 
@@ -14,9 +18,9 @@ var postgres = builder.AddPostgres("mydb-postgres").WithPgAdmin().PublishAsConne
 
 //...
 
-builder.AddProject<SpecFlow_PoC>("weatherforecast")
+builder.AddProject<SpecFlow_PoC>("weatherforecast-api")
+    .WithReference(db)
     .WithReference(cache);
-
 
 builder.Build().Run();
 

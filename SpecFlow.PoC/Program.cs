@@ -25,7 +25,7 @@ builder.Services.ConfigureOptions<ConfigureVersioningOptions>();
 
 builder.Services.AddApiAuthentication();
 
-builder.Services.AddDatabase();
+builder.Services.AddDatabase(builder.Configuration);
 
 builder.Services.AddHealthchecks();
 builder.Services.AddDataProtection();
@@ -61,7 +61,7 @@ builder.Services.AddHttpContextAccessor();
  * Authorization
  *
  *
- * 
+ *
  * CUSTOM ONES
  *
  *
@@ -73,19 +73,19 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.EnsureCreatedAsync();
-    
-    dbContext.Database.Migrate();
+    dbContext.Database.EnsureCreated();
+
+    //dbContext.Database.Migrate();
 
     if (!dbContext.Employees.Any())
     {
         dbContext.Employees.AddRange(TestFixture.BuildEmployees());
         dbContext.SaveChanges();
     }
-    
+
     if (!dbContext.WeatherForecasts.Any())
     {
-        dbContext.WeatherForecasts.Add(new WeatherForecast { Date = DateTime.Now, TemperatureC = 10, Summary = "Freezing" });
+        dbContext.WeatherForecasts.Add(new WeatherForecast { Date = DateTime.Now.ToUniversalTime(), TemperatureC = 10, Summary = "Freezing" });
         dbContext.SaveChanges();
     }
 }

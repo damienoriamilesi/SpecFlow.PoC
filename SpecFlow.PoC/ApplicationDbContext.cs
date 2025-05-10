@@ -11,9 +11,10 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //modelBuilder.HasDefaultSchema("weather");
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -39,10 +40,10 @@ internal static class TestFixture
 {
     public static IEnumerable<Employee> BuildEmployees()
     {
-        yield return new Employee{ BirthdayDate = new DateTime(1999, 1, 1), Name = "Doe1" };
-        yield return new Employee{ BirthdayDate = new DateTime(1995, 1, 1), Name = "Doe2" };
-        yield return new Employee{ BirthdayDate = new DateTime(1998, 1, 1), Name = "Doe3" };
-        yield return new Employee{ BirthdayDate = new DateTime(1999, 1, 1), Name = "Doe4" };
-        yield return new Employee{ BirthdayDate = new DateTime(1997, 1, 1), Name = "Doe5" };
+        yield return new Employee{ BirthdayDate = new DateTime(1999, 1, 1).ToUniversalTime(), Name = "Doe1" };
+        yield return new Employee{ BirthdayDate = new DateTime(1995, 1, 1).ToUniversalTime(), Name = "Doe2" };
+        yield return new Employee{ BirthdayDate = new DateTime(1998, 1, 1).ToUniversalTime(), Name = "Doe3" };
+        yield return new Employee{ BirthdayDate = new DateTime(1999, 1, 1).ToUniversalTime(), Name = "Doe4" };
+        yield return new Employee{ BirthdayDate = new DateTime(1997, 1, 1).ToUniversalTime(), Name = "Doe5" };
     }
 }
