@@ -23,9 +23,12 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<Results<Ok<Employee[]>, NotFound>> Get()
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Employee[]))]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
+    public async Task<Results<Ok<Employee[]>, NotFound>> Get(Guid id)
     {
-        var employeesResult = await _mediator.Send( new GetEmployees.Request() );
+        var employeesResult = await _mediator.Send( new GetEmployees.Request(id) );
         if (!employeesResult.Any())
         {
             return TypedResults.NotFound();

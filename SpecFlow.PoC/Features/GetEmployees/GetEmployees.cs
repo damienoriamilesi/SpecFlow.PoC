@@ -8,7 +8,7 @@ namespace SpecFlow.PoC.Features.GetEmployees;
 
 public static class GetEmployees
 {
-    public record Request() : IRequest<Employee[]>;
+    public record Request(Guid id) : IRequest<Employee[]>;
     public class Handler : IRequestHandler<Request,Employee[]>
     {
         private readonly ApplicationDbContext _context;
@@ -20,7 +20,7 @@ public static class GetEmployees
 
         public async Task<Employee[]> Handle(Request request, CancellationToken cancellationToken)
         {
-            var employees =  await _context.Employees.ToArrayAsync(cancellationToken);
+            var employees =  await _context.Employees.Where(x => x.Id == request.id).ToArrayAsync(cancellationToken);
             return employees;
         }
     }

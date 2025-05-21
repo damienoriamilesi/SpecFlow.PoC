@@ -1,6 +1,15 @@
 ![example workflow](https://github.com/damienoriamilesi/SpecFlow.PoC/actions/workflows/dotnet.yml/badge.svg)
 
 
+# Common topics
+
+- Central package management
+
+  https://learn.microsoft.com/en-us/nuget/consume-packages/central-package-management
+
+
+
+
 # Open API Standard Support
 
 <details>
