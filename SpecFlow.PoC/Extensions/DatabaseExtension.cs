@@ -10,7 +10,8 @@ public static class DatabaseExtension
     /// <summary>
     /// Connection string to put in settings / Vault
     /// </summary>
-    public static string ConnectionString => "Data Source=SQLiteSample.db";
+    //public static string ConnectionString => "Data Source=SQLiteSample.db";
+    public static string ConnectionString => "weather-db";
 
     /// <summary>
     /// Add SQLite component
@@ -29,7 +30,7 @@ public static class DatabaseExtension
         services.AddDbContext<ApplicationDbContext>(options =>
             {
                 //options.UseSqlite(ConnectionString);
-                options.UseNpgsql(configuration.GetConnectionString("weather-db"));
+                options.UseNpgsql(configuration.GetConnectionString(ConnectionString));
             }
         );
     }

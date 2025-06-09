@@ -1,5 +1,7 @@
 using System.Text;
 using System.Text.Json;
+
+using HealthChecks.NpgSql;
 using HealthChecks.Sqlite;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using SpecFlow.PoC.Features;
@@ -18,8 +20,9 @@ public static class HealthCheckExtension
     public static void AddHealthchecks(this IServiceCollection services)
     {
         services.AddHealthChecks()
-            .AddCheck("SQLite Db", new SqliteHealthCheck(new SqliteHealthCheckOptions { ConnectionString = DatabaseExtension.ConnectionString, CommandText = $"SELECT 1 FROM {nameof(Employee)}s"}));
-               
+            .AddNpgSql(DatabaseExtension.ConnectionString);
+//           .AddCheck("SQLite Db", new SqliteHealthCheck(new SqliteHealthCheckOptions { ConnectionString = DatabaseExtension.ConnectionString, CommandText = $"SELECT 1 FROM {nameof(Employee)}s"}));
+
     }
 
     /// <summary>

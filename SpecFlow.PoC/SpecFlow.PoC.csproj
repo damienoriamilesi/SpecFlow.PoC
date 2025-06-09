@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" />
     <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.Sqlite" />
     <PackageReference Include="MediatR"  />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
