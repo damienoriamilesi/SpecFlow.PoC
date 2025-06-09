@@ -100,9 +100,9 @@ Simple calculator for adding **two** numbers
                     "my-tag",
                     "AX-22-AZERTY"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", "\t***Further read***: \n\t**[Learn more about how to generate Living Documentation](" +
-                    "https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenerat" +
-                    "or/Generating-Documentation.html)**", tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Add two numbers", "\t***Further read***: \r\n\t**[Learn more about how to generate Living Documentation]" +
+                    "(https://docs.specflow.org/projects/specflow-livingdoc/en/latest/LivingDocGenera" +
+                    "tor/Generating-Documentation.html)**", tagsOfScenario, argumentsOfScenario, featureTags);
 #line 16
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
