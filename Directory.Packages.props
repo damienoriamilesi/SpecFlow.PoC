@@ -54,6 +54,7 @@
         <!--<PackageVersion Include="prometheus-net.AspNetCore.HealthChecks" Version="8.0.1" />-->
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="8.1.1" />
         <PackageVersion Include="Swashbuckle.AspNetCore.Filters" Version="8.0.3" />
+        <PackageVersion Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     </ItemGroup>
     <ItemGroup>
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
