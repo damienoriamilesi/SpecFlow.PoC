@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 using Asp.Versioning;
 
 using MediatR;
@@ -16,24 +18,51 @@ namespace SpecFlow.PoC.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private int maxThreadsAllowed = 1;
+    //private static Mutex _mutex = new(true, "UniqueAppId");
 
     public EmployeeController(IMediator mediator)
     {
         _mediator = mediator;
     }
 
+    private static readonly ConcurrentDictionary<string, SemaphoreSlim> _userLocks = new();
+    private const string userId = $"bulk_user_TOTO_{nameof(Get)}";
+
     [HttpGet]
     [Route("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Employee[]))]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ProblemDetails))]
-    public async Task<Results<Ok<Employee[]>, NotFound>> Get(Guid id)
+    public async Task<Results<Ok<Employee[]>, BadRequest>> Get(Guid id)
     {
-        var employeesResult = await _mediator.Send( new GetEmployees.Request(id) );
-        if (!employeesResult.Any())
+        //Application logic here
+        var semaphore = _userLocks.GetOrAdd(userId, _ => new SemaphoreSlim(1, 1));
+        if (semaphore.CurrentCount > maxThreadsAllowed)
         {
-            return TypedResults.NotFound();
+            //return TypedResults.BadRequest<BadRequest>();
+            //425 : Too Early
+            throw new Exception("Concurrent attempt not allowed");
         }
+        //await semaphore.WaitAsync();
 
-        return TypedResults.Ok(employeesResult);
+        //return Results.BadRequest(new{ Error = "Too many threads"  });
+
+        try
+        {
+            // Simulate some async work
+            var employeesResult = await _mediator.Send( new GetEmployees.Request(id) );
+            return TypedResults.Ok(employeesResult);
+        }
+        finally
+        {
+            await Task.Delay(5000);
+
+            // Optional: Clean up if no one is waiting
+            if (semaphore.CurrentCount == 1)
+            {
+                _userLocks.TryRemove(userId, out _);
+            }
+            semaphore.Release();
+        }
     }
 }

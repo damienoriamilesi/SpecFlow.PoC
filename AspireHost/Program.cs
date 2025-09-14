@@ -16,11 +16,15 @@ var db = postgres.AddDatabase("weather-db");// Internal API
 // Add Keycloak
 //var keycloak = builder.AddKeycloak("keycloak", 8080);
 
-//...
+//Add RabbitMq
+var rabbit = builder.AddRabbitMQ("rabbit",port:15672)
+    .WithManagementPlugin();
+
 
 builder.AddProject<SpecFlow_PoC>("weatherforecast-api")
     .WithReference(db)
-    .WithReference(cache);
+    .WithReference(cache)
+    .WithReference(rabbit);
 
 builder.Build().Run();
 

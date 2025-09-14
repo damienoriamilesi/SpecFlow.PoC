@@ -11,9 +11,9 @@ using Prometheus;
 
 public class HttpClientMetricsMessageHandler : DelegatingHandler
 {
-    private static readonly string[] RequestLabelNames = new string[] { "method", "host" };
+    private static readonly string[] RequestLabelNames = ["method", "host"];
 
-    private static readonly string[] RequestAndResponseLabelNames = new string[] { "method", "host", "code" };
+    private static readonly string[] RequestAndResponseLabelNames = ["method", "host", "code"];
 
     private static readonly Gauge InProgress = Metrics.CreateGauge(
         "httpclient_requests_in_progress",
