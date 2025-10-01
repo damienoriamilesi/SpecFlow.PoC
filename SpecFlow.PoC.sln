@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aspire", "Aspire", "{26DF8E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{22AB2C6F-C80F-4486-BBBC-BB734701E164}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecFlow.PoC.Common", "SpecFlow.PoC.Common\SpecFlow.PoC.Common.csproj", "{938092FC-AF7E-47DB-81AB-B0D5B1FFAB73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{DD178602-F11B-4412-814F-554D5D4A2D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD178602-F11B-4412-814F-554D5D4A2D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD178602-F11B-4412-814F-554D5D4A2D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{938092FC-AF7E-47DB-81AB-B0D5B1FFAB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{938092FC-AF7E-47DB-81AB-B0D5B1FFAB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{938092FC-AF7E-47DB-81AB-B0D5B1FFAB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{938092FC-AF7E-47DB-81AB-B0D5B1FFAB73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

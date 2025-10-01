@@ -43,6 +43,17 @@ builder.Services.RegisterOpenTelemetry();
 builder.Services.AddTransient<HttpClientMetricsMessageHandler>();
 builder.Services.AddHttpContextAccessor();
 
+// Add StackExchangeRedisCache service for Redis
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "EmployeesCache:";
+});
+
+// Add HybridCache service
+builder.Services.AddHybridCache();
+
+
 #endregion
 
 #region Configure HTTP Request Pipeline
