@@ -13,9 +13,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    
     steps:
     - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -30,7 +35,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       env:
-        CONNECTION_STRING: "Host=localhost;Port=5432;Database=testdb;Username=user;Password=pass"
         TESTCONTAINERS_HOST_OVERRIDE: "host.docker.internal"
         TESTCONTAINERS_RYUK_DISABLED: "true"
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test
