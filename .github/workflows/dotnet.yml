@@ -13,7 +13,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
+    services:
+      docker:
+        image: docker:24-dind
+        options: --privileged
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -25,6 +28,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+    - name: Enable Docker for Testcontainers
+      run: |
+          echo "DOCKER_HOST=unix:///var/run/docker.sock" >> $GITHUB_ENV
+          echo "TESTCONTAINERS_RYUK_DISABLED=true" >> $GITHUB_ENV
+
     - name: Restore Aspire workload
       run: dotnet workload install aspire    
     - name: Restore dependencies
